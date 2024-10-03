@@ -12,9 +12,10 @@ import java.time.LocalDateTime;
 @Getter
 public abstract class BaseTimeEntity {
 
-    @Column(updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     // 엔티티가 저장되기 전에 실핼
