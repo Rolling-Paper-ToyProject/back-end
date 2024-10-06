@@ -1,5 +1,3 @@
-package com.sparklenote.common.config;
-
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -19,7 +17,7 @@ public class SwaggerConfig {
     private Info apiInfo() {
         return new Info()
                 .title("RollingPaper Swagger")
-                .description("RollingPaper REST API")
+                .description("RollingPaper 유저 및 인증 , ps, 알림에 관한 REST API")
                 .version("1.0.0");
     }
 }
