@@ -18,7 +18,7 @@ public class Paper extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int paperId;
+    private Long paperId;
 
     private String content;
 

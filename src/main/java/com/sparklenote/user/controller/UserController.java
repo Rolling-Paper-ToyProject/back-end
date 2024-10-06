@@ -1,7 +1,20 @@
 package com.sparklenote.user.controller;
 
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController("/user")
 public class UserController {
+
+    @GetMapping("/my")
+    public String myAPI() {
+
+        return "my route";
+    }
+
+    @GetMapping("/")
+    public String mainAPI() {
+
+        return "main route";
+    }
 }
