@@ -3,7 +3,7 @@ package com.sparklenote.common.config;
 import com.sparklenote.user.handler.CustomSuccessHandler;
 import com.sparklenote.user.jwt.JWTFilter;
 import com.sparklenote.user.jwt.JWTUtil;
-import com.sparklenote.user.oAuth.CustomOAuth2UserService;
+import com.sparklenote.user.oAuth2.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
