@@ -1,4 +1,4 @@
-package com.sparklenote.user.oAuth;
+package com.sparklenote.user.oAuth2;
 
 import com.sparklenote.domain.entity.User;
 import com.sparklenote.domain.enumType.Role;
