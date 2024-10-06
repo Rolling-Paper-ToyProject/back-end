@@ -1,6 +1,5 @@
 package com.sparklenote.user.oAuth2;
 
-import com.sparklenote.domain.enumType.Role;
 import com.sparklenote.user.dto.response.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
