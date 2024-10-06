@@ -1,4 +1,4 @@
-package com.sparklenote.user.oAuth2;
+package com.sparklenote.user.oAuth;
 
 import com.sparklenote.domain.entity.User;
 import com.sparklenote.domain.enumType.Role;
@@ -25,8 +25,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        System.out.println(oAuth2User);
-
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         OAuth2Response oAuth2Response;
 
@@ -40,15 +38,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             socialType = SocialType.KAKAO;
         }
         else {
-
             return null;
         }
 
         String username = oAuth2Response.getProvider()+" "+oAuth2Response.getProviderId();
         User existUser = userRepository.findByUsername(username);
+        System.out.println("username = " + username);
+        System.out.println("existUser = " + existUser);
+
 
         if (existUser == null) {
-
             // 기존 회원이 없으면 DB에 저장
             UserRequestDTO userRequestDTO = UserRequestDTO.builder()
                     .username(username)
@@ -57,6 +56,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .role(Role.TEACHER)
                     .socialType(socialType)
                     .build();
+            System.out.println("userRequestDTO = " + userRequestDTO);
 
             // DTO를 User 객체로 변환
             User user = userRequestDTO.toEntity();
@@ -70,15 +70,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .role(Role.TEACHER)
                     .socialType(socialType)
                     .build();
-
             return new CustomOAuth2User(userResponseDTO);
         }
         else {
             // 이미 회원이 존재하는 경우
             existUser.updateFromDTO(new UserRequestDTO(oAuth2Response.getEmail(), oAuth2Response.getName()));
-
             userRepository.save(existUser); // 기존 엔티티 업데이트
-
             UserResponseDTO userResponseDTO = new UserResponseDTO(username, oAuth2Response.getName(), oAuth2Response.getEmail(), Role.TEACHER, socialType);
             return new CustomOAuth2User(userResponseDTO);
         }
