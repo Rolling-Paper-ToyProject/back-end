@@ -18,7 +18,7 @@ public class PaperService {
 
     public PaperResponseDTO createPaper(PaperRequestDTO paperRequestDTO, HttpSession session) {
         String studentName = (String) session.getAttribute("studentName");
-        Paper paper = Paper.fromDtoToPaper(paperRequestDTO, studentName);
+        Paper paper = Paper.fromDtoToPaper(paperRequestDTO);
         Paper savedPaper = paperRepository.save(paper);
 
         // 응답 DTO 생성
