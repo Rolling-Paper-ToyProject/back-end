@@ -2,11 +2,9 @@ package com.sparklenote.domain.entity;
 
 import com.sparklenote.domain.enumType.Role;
 import com.sparklenote.domain.enumType.SocialType;
+import com.sparklenote.user.dto.request.UserRequestDTO;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +18,11 @@ public class User extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long userId;
 
+    private String username;
+    private String name;
     private String email;
 
     @Enumerated(EnumType.STRING)
@@ -33,4 +34,12 @@ public class User extends BaseTimeEntity{
     @OneToMany(mappedBy = "user")
     private List<Roll> rolls = new ArrayList<>();
 
+    public void updateFromDTO(UserRequestDTO userRequestDTO) {
+        if (userRequestDTO.getEmail() != null) {
+            this.email = userRequestDTO.getEmail();
+        }
+        if (userRequestDTO.getName() != null) {
+            this.name = userRequestDTO.getName();
+        }
+    }
 }
