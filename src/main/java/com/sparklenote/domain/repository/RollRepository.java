@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RollRepository extends JpaRepository<Roll, Long> {
 
+    boolean existsByUrl(String url);
+
 }
