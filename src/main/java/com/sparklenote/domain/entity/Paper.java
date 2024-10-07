@@ -26,8 +26,6 @@ public class Paper extends BaseTimeEntity{
 
     private String sticker;
 
-    private String studentName; // 학생 이름 필드 추가
-
     @ManyToOne
     @JoinColumn(name = "roll_id")
     private Roll roll;
@@ -39,10 +37,9 @@ public class Paper extends BaseTimeEntity{
     @JoinColumn(name = "student_id", nullable = false)
     private User student; // 학생에 대한 외래 키 (User)
 
-    public static Paper fromDtoToPaper(PaperRequestDTO paperRequestDTO, String studentName) {
+    public static Paper fromDtoToPaper(PaperRequestDTO paperRequestDTO) {
         Paper paper = Paper.builder()
                 .content(paperRequestDTO.getContent())
-                .studentName(studentName) // User의 name을 studentName으로 설정
                 .build();
         return paper;
     }
