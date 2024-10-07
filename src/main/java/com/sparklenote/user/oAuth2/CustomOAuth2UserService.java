@@ -14,6 +14,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Slf4j
 @Service
@@ -45,9 +47,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         String username = oAuth2Response.getProvider()+" "+oAuth2Response.getProviderId();
-        User existUser = userRepository.findByUsername(username);
+        Optional<User> optionalUser = userRepository.findByUsername(username);
 
-        if (existUser == null) {
+
+        if (optionalUser.isEmpty()) {
 
             // 기존 회원이 없으면 DB에 저장
             UserRequestDTO userRequestDTO = UserRequestDTO.builder()
@@ -75,6 +78,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
         else {
             // 이미 회원이 존재하는 경우
+            User existUser = optionalUser.get();
+
             existUser.updateFromDTO(new UserRequestDTO(oAuth2Response.getEmail(), oAuth2Response.getName()));
 
             userRepository.save(existUser); // 기존 엔티티 업데이트

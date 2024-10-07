@@ -18,7 +18,8 @@ public class Paper extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long paperId;
+    @Column(name = "paper_id")
+    private Long id;
 
     private String content;
 
@@ -28,7 +29,8 @@ public class Paper extends BaseTimeEntity{
     @JoinColumn(name = "roll_id")
     private Roll roll;
 
+    @Builder.Default
     @OneToMany(mappedBy = "paper")
-    private List<Sticker> stickers = new ArrayList<>();
+    private List<Sticker>stickers = new ArrayList<>();
 
 }
