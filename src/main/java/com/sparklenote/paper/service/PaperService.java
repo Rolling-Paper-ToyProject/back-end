@@ -24,4 +24,14 @@ public class PaperService {
         // 응답 DTO 생성
         return new PaperResponseDTO(savedPaper.getPaperId(), savedPaper.getContent(), studentName);
     }
+
+    public void deletePaper(Long paperId, HttpSession session) {
+        Long studentId = (Long) session.getAttribute("studentId");
+        Paper paper = paperRepository.findById(paperId).orElse(null);
+        // 소유자 확인
+        if (!paper.getStudent().getId().equals(studentId)) {
+            throw new RuntimeException("삭제 권한이 없습니다.");
+        }
+        paperRepository.delete(paper);
+    }
 }
