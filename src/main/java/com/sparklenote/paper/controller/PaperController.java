@@ -21,17 +21,27 @@ public class PaperController {
     private final PaperService paperService;
 
     @PostMapping("/create")
-    public ResponseEntity<SnResponse<PaperResponseDTO>> paperCreate(@Valid @RequestBody PaperRequestDTO paperRequestDTO, HttpSession session) {
+    public ResponseEntity<SnResponse<PaperResponseDTO>> createPaper(@Valid @RequestBody PaperRequestDTO paperRequestDTO, HttpSession session) {
         PaperResponseDTO responseDTO = paperService.createPaper(paperRequestDTO, session);
         return ResponseEntity.status(CREATE.getStatus())
                 .body(new SnResponse<>(CREATE, responseDTO));
     }
 
-    @DeleteMapping("/delete/{paperId}")
-    public ResponseEntity<SnResponse<Void>> paperDelete(@PathVariable Long paperId, HttpSession session) {
-        paperService.deletePaper(paperId, session);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<SnResponse<Void>> deletePaper(@PathVariable Long id, HttpSession session) {
+        paperService.deletePaper(id, session);
         return ResponseEntity.status(SUCCESS.getStatus())
                 .body(new SnResponse<>(SUCCESS, null));
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<SnResponse<PaperResponseDTO>> updatePaper(
+            @PathVariable Long id,
+            @RequestBody PaperRequestDTO paperRequestDTO,
+            HttpSession session) {
+        PaperResponseDTO responseDTO = paperService.updatePaper(id, paperRequestDTO, session);
+        return ResponseEntity.status(SUCCESS.getStatus())
+                .body(new SnResponse<>(SUCCESS, responseDTO));
     }
 
 }
