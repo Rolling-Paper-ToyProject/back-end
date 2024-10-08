@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -49,5 +52,14 @@ public class PaperService {
 
         // DTO로 변환하여 반환
         return new PaperResponseDTO(updatedPaper.getPaperId(), updatedPaper.getContent(), updatedPaper.getStudent().getName());
+    }
+
+    public List<PaperResponseDTO> getPapers(Long rollId) {
+        List<Paper> papers = paperRepository.findByRoll_Id(rollId);
+
+        return papers.stream()
+                .map(paper -> new PaperResponseDTO(paper.getPaperId(), paper.getContent(), paper.getStudent().getName()))
+                .collect(Collectors.toList());
+
     }
 }
