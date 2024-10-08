@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.sparklenote.common.code.GlobalSuccessCode.CREATE;
 import static com.sparklenote.common.code.GlobalSuccessCode.SUCCESS;
 
@@ -42,6 +44,13 @@ public class PaperController {
         PaperResponseDTO responseDTO = paperService.updatePaper(id, paperRequestDTO, session);
         return ResponseEntity.status(SUCCESS.getStatus())
                 .body(new SnResponse<>(SUCCESS, responseDTO));
+    }
+
+    @GetMapping("/{rollId}")
+    public ResponseEntity<SnResponse<List<PaperResponseDTO>>> getPapersByRollId(@PathVariable Long rollId) {
+        List<PaperResponseDTO> papers = paperService.getPapers(rollId);
+        return ResponseEntity.status(SUCCESS.getStatus())
+                .body(new SnResponse<>(SUCCESS, papers));
     }
 
 }
