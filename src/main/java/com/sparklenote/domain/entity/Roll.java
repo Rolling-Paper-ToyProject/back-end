@@ -36,6 +36,13 @@ public class Roll extends BaseTimeEntity {
     @OneToMany(mappedBy = "roll")
     private List<Paper> papers = new ArrayList<>();
 
+
+
+    // 학급 코드와 URL이 유효한지 확인
+    public boolean canStudentJoin(String inputUrl, int inputClassCode) {
+        return this.url.equals(inputUrl) && this.classCode == inputClassCode;
+    }
+
     // 팩토리 메서드: 학급 코드와 URL을 포함하여 객체를 생성
     public static Roll fromRollCreateDto(RollCreateRequestDto createRequestDto, int classCode, String url, User username) {
         return Roll.builder()
