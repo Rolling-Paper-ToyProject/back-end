@@ -8,12 +8,10 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.sparklenote.common.code.GlobalSuccessCode.CREATE;
+import static com.sparklenote.common.code.GlobalSuccessCode.SUCCESS;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,4 +26,12 @@ public class PaperController {
         return ResponseEntity.status(CREATE.getStatus())
                 .body(new SnResponse<>(CREATE, responseDTO));
     }
+
+    @DeleteMapping("/delete/{paperId}")
+    public ResponseEntity<SnResponse<Void>> paperDelete(@PathVariable Long paperId, HttpSession session) {
+        paperService.deletePaper(paperId, session);
+        return ResponseEntity.status(SUCCESS.getStatus())
+                .body(new SnResponse<>(SUCCESS, null));
+    }
+
 }
