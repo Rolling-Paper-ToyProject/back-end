@@ -38,13 +38,4 @@ public class UserController {
         return ResponseEntity.status(SUCCESS.getStatus())
                 .body(new SnResponse<>(SUCCESS, newAccessToken));
     }
-
-    @PostMapping("/logout")
-    public ResponseEntity<SnResponse<BlacklistResponseDTO>> logout(@RequestBody TokenRequestDTO tokenRequestDTO) {
-        String refreshToken = tokenRequestDTO.getRefreshToken();
-        // 로그아웃 시 리프레시 토큰을 redis 블랙리스트에 추가
-        userService.handleLogout(refreshToken);
-        return ResponseEntity.status(SUCCESS.getStatus())
-                .body(new SnResponse<>(SUCCESS, new BlacklistResponseDTO(refreshToken)));
-    }
 }
