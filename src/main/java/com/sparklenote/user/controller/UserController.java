@@ -2,6 +2,7 @@ package com.sparklenote.user.controller;
 
 import com.sparklenote.common.response.SnResponse;
 import com.sparklenote.user.dto.request.TokenRequestDTO;
+import com.sparklenote.user.dto.response.BlacklistResponseDTO;
 import com.sparklenote.user.dto.response.TokenResponseDTO;
 import com.sparklenote.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
