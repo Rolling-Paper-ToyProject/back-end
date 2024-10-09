@@ -1,6 +1,7 @@
 package com.sparklenote.user.handler;
 
 
+import com.sparklenote.domain.enumType.Role;
 import com.sparklenote.user.jwt.JWTUtil;
 import com.sparklenote.user.oAuth2.CustomOAuth2User;
 import jakarta.servlet.ServletException;
@@ -41,9 +42,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
-        String role = auth.getAuthority();
 
-        String accessToken = jwtUtil.createAccessToken(username, role, accessTokenExpiration);
+        String accessToken = jwtUtil.createAccessToken(username, Role.TEACHER, accessTokenExpiration);
         String refreshToken = jwtUtil.createRefreshToken(username, refreshTokenExpiration);
 
         response.addCookie(createCookie("Authorization", accessToken));
