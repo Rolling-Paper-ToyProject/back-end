@@ -42,7 +42,7 @@ public class UserService {
      */
     public Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(3600); // 예시: 1시간 (초 단위)
+        cookie.setMaxAge(3600); // 1시간 (초 단위)
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         return cookie;
