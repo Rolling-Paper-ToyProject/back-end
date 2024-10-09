@@ -8,10 +8,7 @@ import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-
-import java.util.concurrent.TimeUnit;
 
 
 @Slf4j
@@ -23,8 +20,6 @@ public class UserService {
     private Long accessTokenExpiration;
 
     private final JWTUtil jwtUtil;
-
-    private RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 토큰을 재발급 하는 메소드
@@ -52,14 +47,4 @@ public class UserService {
         cookie.setHttpOnly(true);
         return cookie;
     }
-
-    /**
-     * 로그아웃 시 토큰을 블랙리스트에 저장
-     */
-    public void handleLogout(String refreshToken) {
-        // 리프레시 토큰의 남은 유효 시간을 가져와 해당 시간으로 유효기간을 설정
-        long expiration = 0; // 토큰의 만료 시간을 가져오는 메소드
-        redisTemplate.opsForValue().set(refreshToken, "loggedOut", expiration, TimeUnit.SECONDS);
-    }
-
 }
