@@ -1,5 +1,6 @@
 package com.sparklenote.domain.entity;
 
+import com.sparklenote.paper.dto.request.PaperRequestDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,7 @@ public class Paper extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "paper_id")
     private Long paperId;
 
     private String content;
@@ -30,5 +32,16 @@ public class Paper extends BaseTimeEntity{
 
     @OneToMany(mappedBy = "paper")
     private List<Sticker> stickers = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "student_id", nullable = false)
+    private User student; // 학생에 대한 외래 키 (User)
+
+    public static Paper fromDtoToPaper(PaperRequestDTO paperRequestDTO) {
+        Paper paper = Paper.builder()
+                .content(paperRequestDTO.getContent())
+                .build();
+        return paper;
+    }
 
 }

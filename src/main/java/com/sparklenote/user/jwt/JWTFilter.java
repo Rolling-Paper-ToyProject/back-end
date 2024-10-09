@@ -2,7 +2,7 @@ package com.sparklenote.user.jwt;
 
 import com.sparklenote.domain.enumType.Role;
 import com.sparklenote.user.dto.response.UserResponseDTO;
-import com.sparklenote.user.oAuth.CustomOAuth2User;
+import com.sparklenote.user.oAuth2.CustomOAuth2User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;

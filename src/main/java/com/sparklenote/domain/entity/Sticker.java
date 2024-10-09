@@ -15,7 +15,8 @@ public class Sticker {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long stickerId;
+    @Column(name = "sticker_id")
+    private long id;
 
     private String stickerName;
 

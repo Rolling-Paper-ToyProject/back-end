@@ -2,7 +2,7 @@ package com.sparklenote.user.handler;
 
 
 import com.sparklenote.user.jwt.JWTUtil;
-import com.sparklenote.user.oAuth.CustomOAuth2User;
+import com.sparklenote.user.oAuth2.CustomOAuth2User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

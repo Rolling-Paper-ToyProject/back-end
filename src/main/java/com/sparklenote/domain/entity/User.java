@@ -19,7 +19,7 @@ public class User extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Long userId;
+    private Long id;
 
     private String username;
     private String name;
@@ -31,8 +31,12 @@ public class User extends BaseTimeEntity{
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
+    @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<Roll> rolls = new ArrayList<>();
+
+    @OneToMany(mappedBy = "student") // Paper에서 student로 매핑된 필드
+    private List<Paper> papers = new ArrayList<>(); // 학생이 작성한 Paper 목록
 
     public void updateFromDTO(UserRequestDTO userRequestDTO) {
         if (userRequestDTO.getEmail() != null) {
