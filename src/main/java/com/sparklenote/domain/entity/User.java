@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class User extends BaseTimeEntity{
@@ -45,5 +45,12 @@ public class User extends BaseTimeEntity{
         if (userRequestDTO.getName() != null) {
             this.name = userRequestDTO.getName();
         }
+    }
+    // 학생용 정보 업데이트 메서드 (이름과 역할만 변경)
+    public User withUpdatedStudentInfo(String newName, Role roll) {
+        return this.toBuilder()
+                .name(newName)
+                .role(roll)
+                .build();
     }
 }
