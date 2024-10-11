@@ -13,5 +13,5 @@ public class RollJoinRequestDto {
 
     private String url;         // 롤의 URL
     private int classCode;   // 학생이 입력한 학급 코드
-    private String userId;
+    private String studentName;
 }
