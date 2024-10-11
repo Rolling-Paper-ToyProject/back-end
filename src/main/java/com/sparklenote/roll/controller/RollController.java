@@ -3,6 +3,7 @@ package com.sparklenote.roll.controller;
 import com.sparklenote.common.response.SnResponse;
 import com.sparklenote.roll.dto.request.RollCreateRequestDto;
 import com.sparklenote.roll.dto.request.RollJoinRequestDto;
+import com.sparklenote.roll.dto.response.RollJoinResponseDto;
 import com.sparklenote.roll.dto.response.RollResponseDTO;
 import com.sparklenote.roll.service.RollService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,9 +48,10 @@ public class RollController {
     }
     @PostMapping(value = "/join/{url}", produces = "application/json;charset=UTF-8")
     @Operation(summary = "학생이 Roll에 입장", description = "주어진 URL과 학급 코드를 사용하여 Roll에 입장합니다.")
-    public ResponseEntity<SnResponse<RollJoinRequestDto>> joinRoll(@PathVariable String url, @Valid @RequestBody RollJoinRequestDto joinRequestDto) {
-        RollJoinRequestDto responseDto = rollService.joinRoll(url, joinRequestDto);
+    public ResponseEntity<SnResponse<RollJoinResponseDto>> joinRoll(@PathVariable String url, @Valid @RequestBody RollJoinRequestDto joinRequestDto) {
+        RollJoinResponseDto responseDto = rollService.joinRoll(url, joinRequestDto);
         return ResponseEntity.ok(new SnResponse<>(SUCCESS, responseDto));
     }
+
 }
 
