@@ -2,10 +2,12 @@ package com.sparklenote.roll.service;
 
 import com.sparklenote.domain.entity.Roll;
 import com.sparklenote.domain.entity.User;
+import com.sparklenote.domain.enumType.Role;
 import com.sparklenote.domain.repository.RollRepository;
 import com.sparklenote.domain.repository.UserRepository;
 import com.sparklenote.roll.dto.request.RollCreateRequestDto;
 import com.sparklenote.roll.dto.request.RollJoinRequestDto;
+import com.sparklenote.roll.dto.response.RollJoinResponseDto;
 import com.sparklenote.roll.dto.response.RollResponseDTO;
 import com.sparklenote.roll.util.ClassCodeGenerator;
 import com.sparklenote.roll.util.UrlGenerator;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
 
 @Slf4j
 @Service
@@ -30,9 +33,6 @@ public class RollService {
 
         // SecurityContextHolder에서 로그인된 사용자의 username 가져오기
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println("Principal type: " + principal.getClass().getName());
-
         String username = customOAuth2User.getUsername();
 
         // username으로 User 조회
@@ -47,7 +47,6 @@ public class RollService {
 
         // RollResponseDTO 생성하여 반환
         return RollResponseDTO.fromRoll(savedRoll, user.getId()); // RollResponseDTO에 URL 포함
-
     }
 
     public RollResponseDTO getRollByUrl(String url) {
@@ -57,19 +56,30 @@ public class RollService {
         return RollResponseDTO.fromRoll(roll, user.getId());
     }
 
-    public RollJoinRequestDto joinRoll(String url, RollJoinRequestDto  joinRequestDto) {
+    public RollJoinResponseDto joinRoll(String url, RollJoinRequestDto joinRequestDto) {
         Roll roll = rollRepository.findByUrl(url)
                 .orElseThrow(() -> new IllegalArgumentException("해당 URL의 Roll을 찾을 수 없습니다."));
 
-        // 학급 코드 검증
-        if (roll.getClassCode() != joinRequestDto.getClassCode()) { // int 비교
+        // 학급 코드와 URL 검증
+        if (!roll.canStudentJoin(url, joinRequestDto.getClassCode())) {
             throw new IllegalArgumentException("학급 코드가 일치하지 않습니다.");
         }
 
-        // 학생 정보를 롤에 추가하는 로직
-        // 예를 들어, 학생의 이름을 롤에 추가하거나 별도의 엔티티에 저장할 수 있습니다.
+        // 학생 이름 확인
+        User user = userRepository.findByUsername(joinRequestDto.getStudentName())
+                .orElseThrow(() -> new IllegalArgumentException("학생을 찾을 수 없습니다."));
+
+        // 학생 정보 업데이트 (이름과 역할만 업데이트)
+        User updatedUser = user.withUpdatedStudentInfo(joinRequestDto.getStudentName(), Role.STUDENT);
+        userRepository.save(updatedUser);
 
         // JoinResponseDTO 생성하여 반환
-        return new RollJoinRequestDto(roll.getUrl(), roll.getClassCode(),roll.getUser().getUsername());
+        return RollJoinResponseDto.builder()
+                .url(roll.getUrl())
+                .classCode(roll.getClassCode())
+                .rollName(roll.getRollName())
+                .studentName(updatedUser.getName())
+                .message("학생이 성공적으로 Roll에 입장하였습니다.")
+                .build();
     }
 }
