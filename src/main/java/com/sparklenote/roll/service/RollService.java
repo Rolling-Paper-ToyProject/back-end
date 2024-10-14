@@ -7,6 +7,7 @@ import com.sparklenote.domain.repository.RollRepository;
 import com.sparklenote.domain.repository.UserRepository;
 import com.sparklenote.roll.dto.request.RollCreateRequestDto;
 import com.sparklenote.roll.dto.request.RollJoinRequestDto;
+import com.sparklenote.roll.dto.request.RollUpdateRequestDto;
 import com.sparklenote.roll.dto.response.RollJoinResponseDto;
 import com.sparklenote.roll.dto.response.RollResponseDTO;
 import com.sparklenote.roll.util.ClassCodeGenerator;
@@ -49,9 +50,9 @@ public class RollService {
         return RollResponseDTO.fromRoll(savedRoll, user.getId()); // RollResponseDTO에 URL 포함
     }
 
-    public RollResponseDTO getRollByUrl(String url) {
-        Roll roll = rollRepository.findByUrl(url)
-                .orElseThrow(() -> new IllegalArgumentException("해당 URL의 Roll을 찾을 수 없습니다."));
+    public RollResponseDTO getRollById(Long id) {
+        Roll roll = rollRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 Roll을 찾을 수 없습니다."));
         User user = roll.getUser(); // 롤의 소유자 정보 가져오기
         return RollResponseDTO.fromRoll(roll, user.getId());
     }
@@ -79,7 +80,27 @@ public class RollService {
                 .classCode(roll.getClassCode())
                 .rollName(roll.getRollName())
                 .studentName(updatedUser.getName())
-                .message("학생이 성공적으로 Roll에 입장하였습니다.")
                 .build();
+    }
+
+    public void deleteRoll(Long id) {
+        Roll roll = rollRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 Roll을 찾을 수 없습니다."));
+        rollRepository.delete(roll);
+    }
+
+    public RollResponseDTO updateRollName(Long id, RollUpdateRequestDto updateRequestDto) {
+        Roll roll = rollRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 Roll을 찾을 수 없습니다."));
+
+        // Roll 이름 수정
+        roll.updateName(updateRequestDto.getRollName());
+
+        // 수정된 Roll 저장
+        Roll updatedRoll = rollRepository.save(roll);
+
+        // 수정된 Roll 정보를 DTO로 변환하여 반환
+        Long userId = roll.getUser().getId();
+        return RollResponseDTO.fromRoll(updatedRoll,userId);
     }
 }
