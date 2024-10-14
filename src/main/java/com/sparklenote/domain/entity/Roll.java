@@ -52,6 +52,10 @@ public class Roll extends BaseTimeEntity {
                 .user(username)
                 .build();
     }
+    // 이름 수정 메서드
+    public void updateName(String rollName) {
+        this.rollName = rollName;
+    }
 }
 
 
