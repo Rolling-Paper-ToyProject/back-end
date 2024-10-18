@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RollJoinRequestDto {
 
-    private int classCode;
     private String name;
 
     @Pattern(regexp = "\\d{4}", message = "PIN 번호는 4자리 숫자여야 합니다.")
@@ -23,7 +22,6 @@ public class RollJoinRequestDto {
 
     public Student toStudent(Roll roll) {
         return Student.builder()
-                .classCode(classCode)
                 .name(name)
                 .pinNumber(pinNumber)
                 .roll(roll) // Roll 객체 설정 (롤링페이퍼)
