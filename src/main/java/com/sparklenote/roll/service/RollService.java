@@ -97,13 +97,8 @@ public class RollService {
         Roll roll = rollRepository.findByUrl(url)
                 .orElseThrow(() -> new IllegalArgumentException("해당 URL의 Roll을 찾을 수 없습니다."));
 
-        if (roll.getClassCode() != joinRequestDto.getClassCode()) {
-            throw new IllegalArgumentException("학급 코드가 일치하지 않습니다.");
-        }
-
         // 학생 조회 또는 등록
-        Optional<Student> optionalStudent = studentRepository.findByClassCodeAndNameAndPinNumber(
-                joinRequestDto.getClassCode(),
+        Optional<Student> optionalStudent = studentRepository.findByNameAndPinNumber(
                 joinRequestDto.getName(),
                 joinRequestDto.getPinNumber()
         );
