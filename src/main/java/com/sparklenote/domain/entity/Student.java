@@ -22,8 +22,6 @@ public class Student extends BaseTimeEntity {
 
     private int pinNumber;
 
-    private int classCode;
-
     @Enumerated(EnumType.STRING)
     private Role role;
 
