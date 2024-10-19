@@ -20,7 +20,7 @@ public class Paper extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "paper_id")
-    private Long paperId;
+    private Long id;
 
     private String content;
 
@@ -35,7 +35,7 @@ public class Paper extends BaseTimeEntity{
 
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
-    private User student; // 학생에 대한 외래 키 (User)
+    private Student student; // 학생에 대한 외래 키 (User)
 
     public static Paper fromDtoToPaper(PaperRequestDTO paperRequestDTO) {
         Paper paper = Paper.builder()
