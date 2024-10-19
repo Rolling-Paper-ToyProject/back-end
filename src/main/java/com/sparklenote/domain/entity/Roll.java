@@ -22,8 +22,10 @@ public class Roll extends BaseTimeEntity {
     @Column(name = "roll_id")
     private long id;
 
+    @Column(name = "roll_name")
     private String rollName;
 
+    @Column(name = "class_code")
     private int classCode;
 
     private String url;
@@ -32,11 +34,11 @@ public class Roll extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Builder.Default
+    @OneToMany(mappedBy = "roll", cascade = CascadeType.ALL)
+    private List<Student> students = new ArrayList<>();
+
     @OneToMany(mappedBy = "roll")
     private List<Paper> papers = new ArrayList<>();
-
-
 
     // 학급 코드와 URL이 유효한지 확인
     public boolean canStudentJoin(String inputUrl, int inputClassCode) {
