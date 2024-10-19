@@ -45,7 +45,7 @@ public class RollController {
     }
     @PostMapping(value = "/join/{url}")
     @Operation(summary = "학생이 Roll에 입장", description = "주어진 URL과 학급 코드를 사용하여 Roll에 입장합니다.")
-    public ResponseEntity<SnResponse<RollJoinResponseDto>> joinRoll(@PathVariable String url, @Valid @RequestBody RollJoinRequestDto joinRequestDto) {
+    public ResponseEntity<SnResponse<RollJoinResponseDto>> joinRoll(@PathVariable String url, @RequestBody RollJoinRequestDto joinRequestDto) {
         RollJoinResponseDto responseDto = rollService.joinRoll(url, joinRequestDto);
         return ResponseEntity.ok(new SnResponse<>(SUCCESS, responseDto));
     }
