@@ -15,7 +15,7 @@ public class UrlGenerator {
     public String generateUrl() {
         String randomUrl;
         do {
-            randomUrl = "www.sparklenote.com/roll/" + UUID.randomUUID().toString().substring(0, 8);
+            randomUrl = UUID.randomUUID().toString().substring(0, 8);
         } while (rollRepository.existsByUrl(randomUrl)); // URL 중복 체크
         return randomUrl;
     }
