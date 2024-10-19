@@ -18,6 +18,7 @@ public class Sticker {
     @Column(name = "sticker_id")
     private long id;
 
+    @Column(name = "sticker_name")
     private String stickerName;
 
     @ManyToOne
