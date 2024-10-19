@@ -39,7 +39,7 @@ public class PaperService {
             try {
                 emitter.send(SseEmitter.event()
                         .name(eventType)
-                        .data(new PaperResponseDTO(paper.getPaperId(), paper.getContent(), paper.getStudent().getName())));
+                        .data(new PaperResponseDTO(paper.getId(), paper.getContent(), paper.getStudent().getName())));
             } catch (Exception e) {
                 deadEmitters.add(emitter);  // 연결이 끊긴 경우 제거
             }
@@ -57,7 +57,7 @@ public class PaperService {
 
         sendPaperEvent("create", savedPaper);
         // 응답 DTO 생성
-        return new PaperResponseDTO(savedPaper.getPaperId(), savedPaper.getContent(), studentName);
+        return new PaperResponseDTO(savedPaper.getId(), savedPaper.getContent(), studentName);
     }
 
     /**
@@ -91,7 +91,7 @@ public class PaperService {
         sendPaperEvent("update", updatedPaper);
 
         // DTO로 변환하여 반환
-        return new PaperResponseDTO(updatedPaper.getPaperId(), updatedPaper.getContent(), updatedPaper.getStudent().getName());
+        return new PaperResponseDTO(updatedPaper.getId(), updatedPaper.getContent(), updatedPaper.getStudent().getName());
     }
 
     /**
@@ -101,7 +101,7 @@ public class PaperService {
         List<Paper> papers = paperRepository.findByRoll_Id(rollId);
 
         return papers.stream()
-                .map(paper -> new PaperResponseDTO(paper.getPaperId(), paper.getContent(), paper.getStudent().getName()))
+                .map(paper -> new PaperResponseDTO(paper.getId(), paper.getContent(), paper.getStudent().getName()))
                 .collect(Collectors.toList());
 
     }
