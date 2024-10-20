@@ -37,5 +37,4 @@ public class Student extends BaseTimeEntity {
     @Builder.Default
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<Paper> papers = new ArrayList<>();
-
 }
