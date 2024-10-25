@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -30,6 +31,22 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
 
     @Bean
+    @Order(1)  // shutdown endpoint에 대해서 가장 먼저 필터체인 적용
+    public SecurityFilterChain actuatorSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/actuator/shutdown")  // /actuator/shutdown 경로에 대해서만 필터 체인 적용
+                .authorizeHttpRequests((auth) -> auth
+                        .anyRequest().hasRole("ACTUATOR_ADMIN")  // ACTUATOR_ADMIN 역할만 접근 가능
+                )
+                .httpBasic(httpBasic -> httpBasic
+                        .realmName("ACTUATOR")  // 기본 인증 영역 이름 설정
+                );
+
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
@@ -100,4 +117,5 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 }
