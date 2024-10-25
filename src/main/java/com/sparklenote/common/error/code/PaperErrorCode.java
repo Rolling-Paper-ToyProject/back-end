@@ -6,7 +6,8 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum PaperErrorCode implements BaseErrorCode{
-    PAPER_NOT_FOUND(404, "Paper를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+    PAPER_NOT_FOUND(404, "Paper를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    PAPER_DELETE_FORBIDDEN(403, "Paper 삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
 
     private final int errorCode;
     private final String errorMessage;
