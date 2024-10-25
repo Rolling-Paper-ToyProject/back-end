@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class Paper extends BaseTimeEntity{
@@ -42,6 +42,11 @@ public class Paper extends BaseTimeEntity{
                 .content(paperRequestDTO.getContent())
                 .build();
         return paper;
+    }
+
+    // 수정 작업을 위한 메서드 (필드 업데이트용)
+    public void updateContent(PaperRequestDTO paperRequestDTO) {
+        this.content = paperRequestDTO.getContent();
     }
 
 }
