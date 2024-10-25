@@ -47,3 +47,4 @@ out/
 
 # modules.xml 파일 무시
 .idea/modules.xml
+/logs/
