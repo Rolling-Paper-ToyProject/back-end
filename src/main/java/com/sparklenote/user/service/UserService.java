@@ -1,5 +1,6 @@
 package com.sparklenote.user.service;
 
+import com.sparklenote.common.exception.UserException;
 import com.sparklenote.domain.enumType.Role;
 import com.sparklenote.user.dto.request.TokenRequestDTO;
 import com.sparklenote.user.dto.response.TokenResponseDTO;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import static com.sparklenote.common.error.code.UserErrorCode.TOKEN_IS_NOT_VALID;
 
 
 @Slf4j
@@ -28,7 +31,7 @@ public class UserService {
         String refreshToken = tokenRequestDTO.getRefreshToken();
         // 리프레시 토큰 검증
         if (!jwtUtil.isValidToken(refreshToken)) {
-            log.error("Refresh Token이 유효하지 않습니다.");
+            throw new UserException(TOKEN_IS_NOT_VALID);
         }
         // 리프레시 토큰에서 사용자 정보 추출
         String username = jwtUtil.getUsername(refreshToken);

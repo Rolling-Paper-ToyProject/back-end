@@ -1,5 +1,7 @@
 package com.sparklenote.roll.service;
 
+import com.sparklenote.common.exception.RollException;
+import com.sparklenote.common.exception.UserException;
 import com.sparklenote.domain.entity.Roll;
 import com.sparklenote.domain.entity.Student;
 import com.sparklenote.domain.entity.User;
@@ -23,6 +25,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import static com.sparklenote.common.error.code.RollErrorCode.ROLL_NOT_FOUND;
+import static com.sparklenote.common.error.code.UserErrorCode.USER_NOT_FOUND;
 
 
 @Slf4j
@@ -52,7 +57,7 @@ public class RollService {
 
         // username으로 User 조회
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         // Roll 엔티티 생성
         Roll roll = Roll.fromRollCreateDto(createRequestDto, classCode, url, user);
@@ -66,20 +71,20 @@ public class RollService {
 
     public RollResponseDTO getRollById(Long id) {
         Roll roll = rollRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 Roll을 찾을 수 없습니다."));
+                .orElseThrow(() -> new RollException(ROLL_NOT_FOUND));
         User user = roll.getUser(); // 롤의 소유자 정보 가져오기
         return RollResponseDTO.fromRoll(roll, user.getId());
     }
 
     public void deleteRoll(Long id) {
         Roll roll = rollRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 Roll을 찾을 수 없습니다."));
+                .orElseThrow(() -> new RollException(ROLL_NOT_FOUND));
         rollRepository.delete(roll);
     }
 
     public RollResponseDTO updateRollName(Long id, RollUpdateRequestDto updateRequestDto) {
         Roll roll = rollRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 Roll을 찾을 수 없습니다."));
+                .orElseThrow(() -> new RollException(ROLL_NOT_FOUND));
 
         // Roll 이름 수정
         roll.updateName(updateRequestDto.getRollName());
@@ -95,7 +100,7 @@ public class RollService {
     public RollJoinResponseDto joinRoll(String url, RollJoinRequestDto joinRequestDto) {
         // Roll 조회 및 학급 코드 검증
         Roll roll = rollRepository.findByUrl(url)
-                .orElseThrow(() -> new IllegalArgumentException("해당 URL의 Roll을 찾을 수 없습니다."));
+                .orElseThrow(() -> new RollException(ROLL_NOT_FOUND));
 
         // 학생 조회 또는 등록
         Optional<Student> optionalStudent = studentRepository.findByNameAndPinNumber(
