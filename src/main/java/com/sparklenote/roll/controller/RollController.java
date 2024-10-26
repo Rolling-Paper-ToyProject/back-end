@@ -8,6 +8,7 @@ import com.sparklenote.roll.dto.response.RollJoinResponseDto;
 import com.sparklenote.roll.dto.response.RollResponseDTO;
 import com.sparklenote.roll.service.RollService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class RollController {
     @PostMapping(value = "/create")
     @PreAuthorize("hasRole('TEACHER')")
     @Operation(summary = "학급 roll 생성", description = "학급 roll 생성")
+    @ApiResponse(responseCode = "201", description = "학급 게시판이 성공적으로 생성되었습니다.")
     public ResponseEntity<SnResponse<RollResponseDTO>> createRoll(@Valid @RequestBody RollCreateRequestDto createRequestDto) {
         RollResponseDTO responseDto = rollService.createRoll(createRequestDto);
         return ResponseEntity.status(CREATE.getStatus()) // 201 Created 상태 코드
