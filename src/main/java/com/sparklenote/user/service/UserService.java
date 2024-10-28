@@ -34,8 +34,7 @@ public class UserService {
     /**
      * 토큰을 재발급 하는 메소드
      */
-    public TokenResponseDTO refreshToken(TokenRequestDTO tokenRequestDTO) {
-        String refreshToken = tokenRequestDTO.getRefreshToken();
+    public TokenResponseDTO refreshToken(String refreshToken) {
         // 리프레시 토큰 검증
         if (!jwtUtil.isValidToken(refreshToken)) {
             throw new UserException(TOKEN_IS_NOT_VALID);
