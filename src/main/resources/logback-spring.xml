@@ -1,0 +1,34 @@
+<configuration>
+
+    <!-- Console 로그 설정 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- 첫 번째 줄 메시지만 출력 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 파일에 예외 로그를 기록하는 appender -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/exception.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/exception-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- GlobalExceptionHandler 로그를 Console과 File 모두에 출력 -->
+    <logger name="com.sparklenote.common.exception.GlobalExceptionHandler" level="ERROR" additivity="false">
+        <appender-ref ref="STDOUT" /> <!-- Console 출력 -->
+        <appender-ref ref="FILE" />   <!-- File 출력 -->
+    </logger>
+
+    <!-- 전체 로그를 Console에만 출력 -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+</configuration>

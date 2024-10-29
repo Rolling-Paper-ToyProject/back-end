@@ -1,5 +1,6 @@
 package com.sparklenote.paper.service;
 
+import com.sparklenote.common.exception.PaperException;
 import com.sparklenote.domain.entity.Paper;
 import com.sparklenote.domain.entity.Roll;
 import com.sparklenote.domain.entity.Student;
@@ -18,6 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
+
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.sparklenote.common.error.code.PaperErrorCode.PAPER_DELETE_FORBIDDEN;
+import static com.sparklenote.common.error.code.PaperErrorCode.PAPER_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -102,10 +110,12 @@ public class PaperService {
         Long studentId = Long.parseLong(jwtUtil.getUsername(token));
 
         Paper paper = paperRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Paper not found with id " + id));
+                .orElseThrow(() -> new PaperException(PAPER_NOT_FOUND));
 
         if (!paper.getStudent().getId().equals(studentId)) {
-            throw new RuntimeException("수정 권한이 없습니다.");
+
+            throw new PaperException(PAPER_DELETE_FORBIDDEN);
+
         }
 
         paper.updateContent(paperRequestDTO); // DTO를 사용해 내용 업데이트

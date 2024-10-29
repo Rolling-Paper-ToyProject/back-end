@@ -13,10 +13,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserResponseDTO {
 
+    private Long userId;
     private String username;
     private String name;
     private String email;
     private Role role;
     private SocialType socialType;
 
+    public UserResponseDTO(String username, String name, String email, Role role, SocialType socialType) {
+        this.username = username;
+        this.name = name;
+        this.email = email;
+        this.role = role;
+        this.socialType = socialType;
+    }
 }
