@@ -147,7 +147,7 @@ public class RollService {
 
         // username으로 User 조회
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         // 해당 사용자의 모든 Roll 조회
         List<Roll> rolls = rollRepository.findAllByUser(user);
