@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -49,19 +50,18 @@ class RollControllerTest {
         RollCreateRequestDto requestDto = new RollCreateRequestDto("testRoll");
         String requestBody = objectMapper.writeValueAsString(requestDto);
 
-        // WHEN & THEN : MockMvc를 통한 요청 및 응답 검증
-        mockMvc.perform(post("/roll/create")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(requestBody)
-                    .with(csrf()))
-                .andExpect(status().isCreated())
+        // WHEN
+        ResultActions result = mockMvc.perform(post("/roll/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody)
+                .with(csrf()));
+
+// THEN
+        result.andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code").value(201))
                 .andExpect(jsonPath("$.data.rollName").value("testRoll"))
                 .andExpect(jsonPath("$.data.classCode").value(123456))
                 .andExpect(jsonPath("$.data.url").value("h1y2h3j2"))
                 .andExpect(jsonPath("$.data.userId").value(1L));
-
-
-
     }
 }
