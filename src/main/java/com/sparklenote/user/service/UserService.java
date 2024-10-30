@@ -4,7 +4,6 @@ import com.sparklenote.common.exception.UserException;
 import com.sparklenote.domain.entity.User;
 import com.sparklenote.domain.enumType.Role;
 import com.sparklenote.domain.repository.UserRepository;
-import com.sparklenote.user.dto.request.TokenRequestDTO;
 import com.sparklenote.user.dto.response.TokenResponseDTO;
 import com.sparklenote.user.dto.response.UserInfoResponseDTO;
 import com.sparklenote.user.jwt.JWTUtil;
@@ -91,4 +90,3 @@ public class UserService {
         throw new UserException(TOKEN_IS_NOT_VALID);
     }
 }
-
