@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum UserErrorCode implements BaseErrorCode{
 
-    TOKEN_IS_NOT_VALID(401, "Refresh Token이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED),
+    TOKEN_IS_NOT_VALID(401, "유효하지 않은 토큰입니다.", HttpStatus.UNAUTHORIZED),
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 
     private final int errorCode;

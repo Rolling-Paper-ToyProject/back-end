@@ -58,7 +58,10 @@ public class UserService {
         return cookie;
     }
 
-    public UserInfoResponseDTO getUserInfo(String token) {
+    public UserInfoResponseDTO getUserInfo(String authorizationHeader) {
+
+        String token = extractToken(authorizationHeader);
+
         boolean validToken = jwtUtil.isValidToken(token);
 
         if (!validToken) {
@@ -80,4 +83,12 @@ public class UserService {
                 .build();
         return userInfoResponseDTO;
     }
+
+    private String extractToken(String authorizationHeader) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.substring(7);
+        }
+        throw new UserException(TOKEN_IS_NOT_VALID);
+    }
 }
+
