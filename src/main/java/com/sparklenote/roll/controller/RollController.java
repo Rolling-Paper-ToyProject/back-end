@@ -17,6 +17,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.List;
+
 import static com.sparklenote.common.code.GlobalSuccessCode.CREATE;
 import static com.sparklenote.common.code.GlobalSuccessCode.SUCCESS;
 
@@ -72,6 +74,12 @@ public class RollController {
         rollService.deleteRoll(id);
         return ResponseEntity.status(SUCCESS.getStatus()) // 204 No Content 상태 코드
                 .body(new SnResponse<>(SUCCESS, null));
+    }
+    @GetMapping("/my/rolls")
+    @Operation(summary = "내 Roll 목록 조회", description = "현재 로그인한 사용자의 모든 Roll 목록을 조회합니다.")
+    public ResponseEntity<SnResponse<List<RollResponseDTO>>> getMyRolls() {
+        List<RollResponseDTO> rollList = rollService.getMyRolls();
+        return ResponseEntity.ok(new SnResponse<>(SUCCESS, rollList));
     }
 }
 

@@ -24,7 +24,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.sparklenote.common.error.code.RollErrorCode.ROLL_NOT_FOUND;
 import static com.sparklenote.common.error.code.UserErrorCode.USER_NOT_FOUND;
@@ -136,5 +138,23 @@ public class RollService {
                 .build();
 
         return responseDto;
+    }
+
+    public List<RollResponseDTO> getMyRolls() {
+        // SecurityContextHolder에서 현재 로그인된 사용자 정보 가져오기
+        CustomOAuth2User customOAuth2User = (CustomOAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = customOAuth2User.getUsername();
+
+        // username으로 User 조회
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+        // 해당 사용자의 모든 Roll 조회
+        List<Roll> rolls = rollRepository.findAllByUser(user);
+
+        // Roll 목록을 DTO로 변환하여 반환
+        return rolls.stream()
+                .map(roll -> RollResponseDTO.fromRoll(roll, user.getId()))
+                .collect(Collectors.toList());
     }
 }
