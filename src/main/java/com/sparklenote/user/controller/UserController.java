@@ -45,8 +45,8 @@ public class UserController {
 
     @GetMapping("/info")
     @Operation(summary = "/user/info", description = "userId와 name을 클라이언트로 전달")
-    public ResponseEntity<SnResponse<UserInfoResponseDTO>> info(@RequestHeader("Authorization") String token) {
-        UserInfoResponseDTO userInfo = userService.getUserInfo(token);
+    public ResponseEntity<SnResponse<UserInfoResponseDTO>> info(@RequestHeader("Authorization") String authorizationHeader) {
+        UserInfoResponseDTO userInfo = userService.getUserInfo(authorizationHeader);
         return ResponseEntity.status(SUCCESS.getStatus())
                 .body(new SnResponse<>(SUCCESS, userInfo));
 
