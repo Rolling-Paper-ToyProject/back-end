@@ -3,7 +3,8 @@ package com.sparklenote.roll.dto.request;
 import com.sparklenote.domain.entity.Roll;
 import com.sparklenote.domain.entity.Student;
 import com.sparklenote.domain.enumType.Role;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +18,8 @@ public class RollJoinRequestDto {
 
     private String name;
 
-    //@Pattern(regexp = "\\d{4}", message = "PIN 번호는 4자리 숫자여야 합니다.")
+    @Min(value = 1000, message = "PIN 번호는 4자리 숫자여야 합니다.")
+    @Max(value = 9999, message = "PIN 번호는 4자리 숫자여야 합니다.")
     private int pinNumber;
 
     public Student toStudent(Roll roll) {
