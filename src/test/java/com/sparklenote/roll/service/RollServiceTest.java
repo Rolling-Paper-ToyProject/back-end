@@ -85,7 +85,6 @@ public class RollServiceTest {
                 .build();
 
         Roll roll = Roll.fromRollCreateDto(requestDto, classCode, url, mockUser);
-        System.out.println("roll = " + roll);
 
         // Mock 설정
         given(userRepository.findByUsername("testUsername")).willReturn(Optional.of(mockUser));
