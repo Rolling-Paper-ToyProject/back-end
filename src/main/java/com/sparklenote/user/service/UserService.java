@@ -88,7 +88,7 @@ public class UserService {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             return authorizationHeader.substring(7);
         }
-        throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        throw new UserException(TOKEN_IS_NOT_VALID);
     }
 }
 
