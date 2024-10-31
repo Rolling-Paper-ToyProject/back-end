@@ -22,7 +22,7 @@ import static com.sparklenote.common.code.GlobalSuccessCode.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/roll")
-@Tag(name = "Roll 생성", description = "roll 등록 API")
+@Tag(name = "Roll Controller", description = "roll 등록 API")
 public class RollController {
     private final RollService rollService;
 

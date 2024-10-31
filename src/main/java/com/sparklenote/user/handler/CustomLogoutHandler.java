@@ -24,7 +24,8 @@ public class CustomLogoutHandler implements LogoutHandler {
 
         if (refreshToken != null) {
             // Redis에 리프레시 토큰을 0초 유효기간으로 설정하여 즉시 만료
-            redisTemplate.opsForValue().set(refreshToken, "loggedOut", 0, TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set(refreshToken, "loggedOut", 1, TimeUnit.SECONDS);
+            // 0은 RuntimeException 발생으로 1로 변경
         }
     }
 
