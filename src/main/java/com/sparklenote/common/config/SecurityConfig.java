@@ -109,7 +109,7 @@ public class SecurityConfig {
                 .logout((logout) -> logout
                 .logoutUrl("/logout")  // 로그아웃 엔드포인트 설정
                 .addLogoutHandler(customLogoutHandler)  // 커스텀 로그아웃 핸들러 추가
-                .logoutSuccessUrl("/login?logout")  // 로그아웃 성공 후 리다이렉트할 URL (지금은 메인페이지의 주소가 정확하지 않아서 로그인 페이지로 리다이렉트 설정 해놓았음)
+                .logoutSuccessUrl("http://localhost:3000/login")  // 로그아웃 성공 후 리다이렉트할 URL (지금은 메인페이지의 주소가 정확하지 않아서 로그인 페이지로 리다이렉트 설정 해놓았음)
                  // logoutSuccessUrl("/index.html") -> 처럼 설정하면 됨
                 .invalidateHttpSession(true)  // 세션 무효화
                 .deleteCookies("Authorization", "RefreshToken")  // 로그아웃 시 쿠키 삭제

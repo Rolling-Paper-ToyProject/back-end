@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.sparklenote.common.error.code.RollErrorCode.ROLL_NOT_FOUND;
+import static com.sparklenote.common.error.code.RollErrorCode.*;
 import static com.sparklenote.common.error.code.UserErrorCode.USER_NOT_FOUND;
 
 
@@ -61,6 +61,10 @@ public class RollService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
+        if (user.getRole() == Role.STUDENT) {
+            throw new RollException(UNAUTHORIZED_STUDENT);
+        }
+
         // Roll 엔티티 생성
         Roll roll = Roll.fromRollCreateDto(createRequestDto, classCode, url, user);
 
@@ -87,6 +91,10 @@ public class RollService {
     public RollResponseDTO updateRollName(Long id, RollUpdateRequestDto updateRequestDto) {
         Roll roll = rollRepository.findById(id)
                 .orElseThrow(() -> new RollException(ROLL_NOT_FOUND));
+
+        if (roll.getRollName().equals(updateRequestDto.getRollName())) {
+            throw new RollException(ROLL_NAME_NOT_CHANGED);
+        }
 
         // Roll 이름 수정
         roll.updateName(updateRequestDto.getRollName());
