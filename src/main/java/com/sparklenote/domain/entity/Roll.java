@@ -20,7 +20,7 @@ public class Roll extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "roll_id")
-    private long id;
+    private Long id;
 
     @Column(name = "roll_name")
     private String rollName;

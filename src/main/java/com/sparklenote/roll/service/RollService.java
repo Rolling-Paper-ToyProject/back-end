@@ -18,6 +18,7 @@ import com.sparklenote.roll.util.ClassCodeGenerator;
 import com.sparklenote.roll.util.UrlGenerator;
 import com.sparklenote.user.jwt.JWTUtil;
 import com.sparklenote.user.oAuth2.CustomOAuth2User;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -107,7 +108,7 @@ public class RollService {
         return RollResponseDTO.fromRoll(updatedRoll,userId);
     }
 
-    public RollJoinResponseDto joinRoll(String url, RollJoinRequestDto joinRequestDto) {
+    public RollJoinResponseDto joinRoll(String url, RollJoinRequestDto joinRequestDto, HttpServletResponse response) {
         // Roll 조회 및 학급 코드 검증
         Roll roll = rollRepository.findByUrl(url)
                 .orElseThrow(() -> new RollException(ROLL_NOT_FOUND));
@@ -138,11 +139,13 @@ public class RollService {
                 refreshTokenExpiration
         );
 
+        response.setHeader("Authorization", "Bearer " + accessToken);
+        response.setHeader("RefreshToken", refreshToken);
+
         // 응답 DTO 생성
         RollJoinResponseDto responseDto = RollJoinResponseDto.builder()
+                .studentId(student.getId())
                 .name(student.getName())
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
                 .build();
 
         return responseDto;

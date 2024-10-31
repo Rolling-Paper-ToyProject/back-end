@@ -22,23 +22,11 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/my")
-    public String myAPI() {
-
-        return "my route";
-    }
-
-    @GetMapping("/")
-    public String mainAPI() {
-
-        return "main route";
-    }
-
     @PostMapping("/tokenRefresh")
     @Operation(summary = "/user/tokenRefresh", description = "Refresh Token을 통해 Access Token을 재발급하는 메소드")
-    public ResponseEntity<SnResponse<TokenResponseDTO>> refreshToken(@RequestHeader String refreshToken, HttpServletResponse response) {
+    public ResponseEntity<SnResponse<TokenResponseDTO>> refreshToken(@RequestHeader("RefreshToken") String refreshToken, HttpServletResponse response) {
         TokenResponseDTO newAccessToken = userService.refreshToken(refreshToken);
-        response.addCookie(userService.createCookie("Authorization", newAccessToken.getAccessToken()));
+        response.setHeader("Authorization", "Bearer " + newAccessToken.getAccessToken());
         return ResponseEntity.status(SUCCESS.getStatus())
                 .body(new SnResponse<>(SUCCESS, newAccessToken));
     }

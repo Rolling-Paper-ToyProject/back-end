@@ -14,8 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RollJoinResponseDto {
 
+    private Long studentId;
     private String name;
-    private String accessToken;
-    private String refreshToken;
 
 }
