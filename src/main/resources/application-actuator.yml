@@ -1,0 +1,28 @@
+# application-actuator.yml
+# spring security
+spring:
+  security:
+    user:
+      name: ${ACTUATOR_USER:admin}
+      password: ${ACTUATOR_PASSWORD:admin}
+      roles: ACTUATOR_ADMIN
+
+# actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ${ACTUATOR_ENDPOINTS:health,info,metrics,prometheus}
+  endpoint:
+    health:
+      show-details: ${ACTUATOR_HEALTH_DETAILS:always}
+
+# application info
+info:
+  app:
+    name: ${PROJECT_NAME:DefaultName}
+    description: ${PROJECT_DESCRIPTION:DefaultDescription}
+    version: ${PROJECT_VERSION:1.0.0}
+    encoding: ${SOURCE_ENCODING:UTF-8}
+    java:
+      version: ${JAVA_VERSION:17}
