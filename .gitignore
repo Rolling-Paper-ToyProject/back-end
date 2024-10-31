@@ -37,16 +37,18 @@ out/
 .vscode/
 
 # db 폴더 무시
-/src/main/java/com/sparklenote/common/db/
+/db
 
-# docker-compose.yml 파일 무시
-/docker-compose.yml
-/dockerfile
 
 # misc.xml 파일 무시
 .idea/misc.xml
 
-# modules.xml 파일 무시
+# modules.xml 파일
 .idea/modules.xml
 
 /logs/
+
+# .env 파일
+.env
+
+
