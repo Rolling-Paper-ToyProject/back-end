@@ -1,6 +1,7 @@
 package com.sparklenote.paper.service;
 
 import com.sparklenote.common.exception.PaperException;
+import com.sparklenote.common.exception.UserException;
 import com.sparklenote.domain.entity.Paper;
 import com.sparklenote.domain.entity.Roll;
 import com.sparklenote.domain.entity.Student;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 
 import static com.sparklenote.common.error.code.PaperErrorCode.PAPER_DELETE_FORBIDDEN;
 import static com.sparklenote.common.error.code.PaperErrorCode.PAPER_NOT_FOUND;
+import static com.sparklenote.common.error.code.UserErrorCode.TOKEN_IS_NOT_VALID;
 
 @Slf4j
 @Service
@@ -144,6 +146,6 @@ public class PaperService {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             return authorizationHeader.substring(7);
         }
-        throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        throw new UserException(TOKEN_IS_NOT_VALID);
     }
 }
