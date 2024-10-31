@@ -50,3 +50,7 @@ out/
 .idea/modules.xml
 
 /logs/
+
+.env
+
+/db
