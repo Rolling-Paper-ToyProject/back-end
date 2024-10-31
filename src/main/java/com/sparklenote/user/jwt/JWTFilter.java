@@ -5,7 +5,6 @@ import com.sparklenote.user.dto.response.UserResponseDTO;
 import com.sparklenote.user.oAuth2.CustomOAuth2User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,49 +23,38 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        //cookie들을 불러온 뒤 Authorization Key에 담긴 쿠키를 찾음
-        String authorization = null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                System.out.println(cookie.getName());
-                if (cookie.getName().equals("Authorization")) {
-                    authorization = cookie.getValue();
-                }
-            }
-        }
-
-        //Authorization 헤더 검증
-        if (authorization == null) {
+        // Authorization 헤더에서 JWT 토큰 추출
+        String authorizationHeader = request.getHeader("Authorization");
+        // 헤더에 Authorization 값이 없으면 필터 체인 계속 진행
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        //토큰
-        String token = authorization;
-
-        //토큰 소멸 시간 검증
-        if (jwtUtil.isExpired(token)) {
+        // 'Bearer ' 접두사 제거 후 실제 토큰만 추출
+        String token = authorizationHeader.substring(7);
+        // 토큰 소멸 시간, 유효성 검증
+        if (jwtUtil.isExpired(token) || !jwtUtil.isValidToken(token)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        //토큰에서 username과 role 획득
+        // 토큰에서 username과 role 획득
         String username = jwtUtil.getUsername(token);
         String roleName = jwtUtil.getRole(token);
         Role role = Role.valueOf(roleName);
 
-        //userDTO를 생성하여 값 set
+        // userDTO를 생성하여 값 set
         UserResponseDTO userResponseDTO = new UserResponseDTO();
         userResponseDTO.setUsername(username);
         userResponseDTO.setRole(role);
 
-        //UserDetails에 회원 정보 객체 담기
+        // UserDetails에 회원 정보 객체 담기
         CustomOAuth2User customOAuth2User = new CustomOAuth2User(userResponseDTO);
 
-        //스프링 시큐리티 인증 토큰 생성
+        // 스프링 시큐리티 인증 토큰 생성
         Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
-        //세션에 사용자 등록
+        // 세션에 사용자 등록
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);

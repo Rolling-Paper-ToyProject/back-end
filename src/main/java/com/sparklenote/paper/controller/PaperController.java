@@ -38,7 +38,7 @@ public class PaperController {
 
     @Operation(summary = "/paper/delete/{id}", description = "paper 삭제")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<SnResponse<Void>> deletePaper(@PathVariable Long id, @RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<SnResponse<Void>> deletePaper(@PathVariable("id") Long id, @RequestHeader("Authorization") String authorizationHeader) {
         paperService.deletePaper(id, authorizationHeader);
         return ResponseEntity.status(SUCCESS.getStatus())
                 .body(new SnResponse<>(SUCCESS, null));
@@ -46,8 +46,8 @@ public class PaperController {
 
     @Operation(summary = "/paper/update/{id}", description = "paper 수정")
     @PutMapping("/update/{id}")
-    public ResponseEntity<SnResponse<PaperResponseDTO>>    updatePaper(
-            @PathVariable Long id,
+    public ResponseEntity<SnResponse<PaperResponseDTO>> updatePaper(
+            @PathVariable("id") Long id,
             @RequestBody PaperRequestDTO paperRequestDTO,
             @RequestHeader("Authorization") String authorizationHeader) {
         PaperResponseDTO responseDTO = paperService.updatePaper(id, paperRequestDTO, authorizationHeader);
@@ -57,7 +57,7 @@ public class PaperController {
 
     @Operation(summary = "/paper/{rollId}", description = "paper 조회")
     @GetMapping("/{rollId}")
-    public ResponseEntity<SnResponse<List<PaperResponseDTO>>> getPapersByRollId(@PathVariable Long rollId) {
+    public ResponseEntity<SnResponse<List<PaperResponseDTO>>> getPapersByRollId(@PathVariable("rollId") Long rollId) {
         List<PaperResponseDTO> papers = paperService.getPapers(rollId);
         return ResponseEntity.status(SUCCESS.getStatus())
                 .body(new SnResponse<>(SUCCESS, papers));

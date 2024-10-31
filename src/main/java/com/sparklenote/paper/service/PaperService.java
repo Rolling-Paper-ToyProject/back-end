@@ -71,16 +71,13 @@ public class PaperService {
         // 학생 조회
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("학생을 찾을 수 없습니다."));
-
         Roll roll = student.getRoll();
-
         // Paper 엔티티 생성 및 학생 설정
         Paper paper = Paper.fromDtoToPaper(paperRequestDTO).toBuilder()
                 .student(student)
                 .roll(roll) // Student 객체에서 가져온 Roll 설정
                 .build();
         Paper savedPaper = paperRepository.save(paper);
-
         sendPaperEvent("create", savedPaper);
 
         // 응답 DTO 생성
@@ -91,8 +88,7 @@ public class PaperService {
      * paper를 삭제하는 메소드
      */
     public void deletePaper(Long id, String authorizationHeader) {
-        String token = extractToken(authorizationHeader);
-        Long studentId = Long.parseLong(jwtUtil.getUsername(token));
+        Long studentId = Long.parseLong(jwtUtil.getUsername(authorizationHeader));
 
         Paper paper = paperRepository.findById(id).orElseThrow(() -> new RuntimeException("Paper not found with id " + id));
 
@@ -108,8 +104,7 @@ public class PaperService {
      * paper를 수정하는 메소드
      */
     public PaperResponseDTO updatePaper(Long id, PaperRequestDTO paperRequestDTO, String authorizationHeader) {
-        String token = extractToken(authorizationHeader);
-        Long studentId = Long.parseLong(jwtUtil.getUsername(token));
+        Long studentId = Long.parseLong(jwtUtil.getUsername(authorizationHeader));
 
         Paper paper = paperRepository.findById(id)
                 .orElseThrow(() -> new PaperException(PAPER_NOT_FOUND));
@@ -138,10 +133,6 @@ public class PaperService {
                 .map(paper -> new PaperResponseDTO(paper.getId(), paper.getContent(), paper.getStudent().getName()))
                 .collect(Collectors.toList());
     }
-
-    /**
-     * Authorization 헤더에서 Bearer 토큰 추출
-     */
     private String extractToken(String authorizationHeader) {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             return authorizationHeader.substring(7);
