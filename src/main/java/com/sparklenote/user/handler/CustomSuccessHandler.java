@@ -4,7 +4,6 @@ package com.sparklenote.user.handler;
 import com.sparklenote.domain.enumType.Role;
 import com.sparklenote.user.jwt.JWTUtil;
 import com.sparklenote.user.oAuth2.CustomOAuth2User;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
@@ -30,17 +30,18 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private Long refreshTokenExpiration;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
         String username = customUserDetails.getUsername();
-
 
         String accessToken = jwtUtil.createAccessToken(username, Role.TEACHER, accessTokenExpiration);
         String refreshToken = jwtUtil.createRefreshToken(username, refreshTokenExpiration);
 
+        // 프론트엔드의 콜백 페이지로 리다이렉트, 프래그먼트에 토큰을 추가
+        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth/callback")
+                .fragment("token=" + accessToken + "&refreshToken=" + refreshToken)
+                .build().toUriString();
 
-        response.setHeader("Authorization", "Bearer "+ accessToken);
-        response.setHeader("RefreshToken", refreshToken);
+        getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 }
