@@ -23,6 +23,17 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        // 소셜 로그인 경로에 대한 요청은 JWT 필터링을 하지 않음
+        // 필터링을 무시할 경로 추가
+        String requestURI = request.getRequestURI();
+        if (requestURI.startsWith("/login") ||
+                requestURI.startsWith("/oauth2/authorization") ||
+                requestURI.startsWith("/login/oauth2/code") ||
+                requestURI.startsWith("/roll/join/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // Authorization 헤더에서 JWT 토큰 추출
         String authorizationHeader = request.getHeader("Authorization");
         // 헤더에 Authorization 값이 없으면 필터 체인 계속 진행

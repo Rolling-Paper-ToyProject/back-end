@@ -21,7 +21,7 @@ public class JWTUtil {
     private SecretKey secretKey;
 
     public JWTUtil(@Value("${jwt.secret}") String secret) {
-        log.info("Initializing JWTUtil with secret");  // 로그 추가
+        log.info("Initializing JWTUtil with secret");
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), SignatureAlgorithm.HS256.getJcaName());
     }
 

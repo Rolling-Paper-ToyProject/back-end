@@ -15,10 +15,16 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @RequiredArgsConstructor
 @Configuration
@@ -116,6 +122,17 @@ public class SecurityConfig {
                 .permitAll());
 
         return http.build();
+    }
+
+    /**
+     * 권한 없이 허용하는 endpoint
+     */
+
+    private RequestMatcher[] permitAllRequestMatchers() {
+        List<RequestMatcher> requestMatchers = List.of(
+          antMatcher(POST, "/user/login")
+        );
+        return requestMatchers.toArray(RequestMatcher[]::new);
     }
 
 }

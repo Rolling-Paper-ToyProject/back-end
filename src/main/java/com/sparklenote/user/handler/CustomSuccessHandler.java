@@ -39,6 +39,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         response.setHeader("Authorization", "Bearer " + accessToken);
         response.setHeader("RefreshToken", refreshToken);
-        response.sendRedirect("http://localhost:3000/mypage");
+        response.sendRedirect("http://localhost:3000/oauth/callback");
     }
 }
