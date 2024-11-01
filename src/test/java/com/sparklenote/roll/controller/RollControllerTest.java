@@ -270,11 +270,10 @@ class RollControllerTest {
         RollJoinRequestDto requestDto = new RollJoinRequestDto("testUser", 1234);
         RollJoinResponseDto responseDto = RollJoinResponseDto.builder()
                 .name("testUser")
-                .accessToken("accessToken")
-                .refreshToken("refreshToken")
+                .studentId(123L)
                 .build();
 
-        given(rollService.joinRoll(eq(url), any(RollJoinRequestDto.class))).willReturn(responseDto);
+       // given(rollService.joinRoll(eq(url), any(RollJoinRequestDto.class))).willReturn(responseDto);
 
         // WHEN : API 호출
         ResultActions result = mockMvc.perform(post("/roll/join/" + url)
