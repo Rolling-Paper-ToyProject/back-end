@@ -1,13 +1,22 @@
-# Java 21 이미지를 기반으로 사용
+# Build stage
+FROM gradle:jdk21 AS builder
+WORKDIR /build
+COPY . .
+RUN gradle build -x test --no-daemon
+
+# Runtime stage
 FROM openjdk:21-jdk-slim
+WORKDIR /app
 
-# 빌드된 애플리케이션 JAR 파일을 컨테이너에 복사
-COPY build/libs/sparkle-note-0.0.1-SNAPSHOT.jar app.jar
+# 타임존 설정
+ENV TZ=Asia/Seoul
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# 포트 설정 (백엔드 애플리케이션이 사용할 포트)
+# 빌드 스테이지에서 생성된 JAR 파일만 복사
+COPY --from=builder /build/build/libs/sparkle-note-0.0.1-SNAPSHOT.jar app.jar
+
 EXPOSE 8080
 
-# 애플리케이션 실행 명령어
 ENTRYPOINT ["java", "-jar", \
             "-Duser.timezone=Asia/Seoul", \
             "-XX:+UseContainerSupport", \
