@@ -69,7 +69,7 @@ public class SecurityConfig {
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setMaxAge(3600L);
 
-                        configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
+
                         return configuration;
                     }
                 }));
