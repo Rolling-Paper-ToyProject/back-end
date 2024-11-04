@@ -22,7 +22,7 @@ public class RollJoinRequestDto {
     private String name;
 
     @NotNull(message = "클래스 코드는 필수입니다.")
-    private Integer classCode;
+    private int classCode;
 
     @Min(value = 1000, message = "PIN 번호는 4자리 숫자여야 합니다.")
     @Max(value = 9999, message = "PIN 번호는 4자리 숫자여야 합니다.")
