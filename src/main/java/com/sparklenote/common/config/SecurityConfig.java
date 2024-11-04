@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @RequiredArgsConstructor
@@ -65,11 +65,11 @@ public class SecurityConfig {
 
                         configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
-                        configuration.setAllowCredentials(true);
+                        //configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setMaxAge(3600L);
 
-
+                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
                         return configuration;
                     }
                 }));
@@ -130,9 +130,29 @@ public class SecurityConfig {
 
     private RequestMatcher[] permitAllRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
-          antMatcher(POST, "/user/login")
+          antMatcher(POST, "/user/login"),
+          antMatcher(POST, "/roll/join")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
+
+    private RequestMatcher[] userAuthRequestMatchers() {
+        List<RequestMatcher> requestMatchers = List.of(
+                antMatcher(POST, "/user/tokenRefresh"),
+                antMatcher(GET, "/user/info"),
+
+                antMatcher(POST, "/roll/create"),
+                antMatcher(PUT, "/roll/update/"),
+                antMatcher(GET, "/roll/my/rolls"),
+                antMatcher(DELETE, "/roll/delete/"),
+
+                antMatcher(POST, "/paper/create"),
+                antMatcher(PUT, "/paper/update/"),
+                antMatcher(GET, "/paper/"),
+                antMatcher(DELETE, "/paper/delete/")
+        );
+        return requestMatchers.toArray(RequestMatcher[]::new);
+    }
+
 
 }
