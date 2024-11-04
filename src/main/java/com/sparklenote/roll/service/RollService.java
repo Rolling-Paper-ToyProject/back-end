@@ -76,13 +76,6 @@ public class RollService {
         return RollResponseDTO.fromRoll(savedRoll, user.getId()); // RollResponseDTO에 URL 포함
     }
 
-    public RollResponseDTO getRollById(Long id) {
-        Roll roll = rollRepository.findById(id)
-                .orElseThrow(() -> new RollException(ROLL_NOT_FOUND));
-        User user = roll.getUser(); // 롤의 소유자 정보 가져오기
-        return RollResponseDTO.fromRoll(roll, user.getId());
-    }
-
     public void deleteRoll(Long id) {
         Roll roll = rollRepository.findById(id)
                 .orElseThrow(() -> new RollException(ROLL_NOT_FOUND));
@@ -112,6 +105,11 @@ public class RollService {
         // Roll 조회 및 학급 코드 검증
         Roll roll = rollRepository.findByUrl(url)
                 .orElseThrow(() -> new RollException(ROLL_NOT_FOUND));
+
+        if(!roll.validateClassCode(joinRequestDto.getClassCode())) {
+            throw new RollException(INVALID_CLASS_CODE);
+        }
+
 
         // 학생 조회 또는 등록
         Optional<Student> optionalStudent = studentRepository.findByNameAndPinNumber(
@@ -143,12 +141,10 @@ public class RollService {
         response.setHeader("RefreshToken", refreshToken);
 
         // 응답 DTO 생성
-        RollJoinResponseDto responseDto = RollJoinResponseDto.builder()
-                .studentId(student.getId())
+
+        return RollJoinResponseDto.builder()
                 .name(student.getName())
                 .build();
-
-        return responseDto;
     }
 
     public List<RollResponseDTO> getMyRolls() {
