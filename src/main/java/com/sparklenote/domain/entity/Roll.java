@@ -41,8 +41,8 @@ public class Roll extends BaseTimeEntity {
     private List<Paper> papers = new ArrayList<>();
 
     // 학급 코드와 URL이 유효한지 확인
-    public boolean canStudentJoin(String inputUrl, int inputClassCode) {
-        return this.url.equals(inputUrl) && this.classCode == inputClassCode;
+    public boolean validateClassCode(int inputClassCode) {
+        return classCode == inputClassCode;
     }
 
     // 팩토리 메서드: 학급 코드와 URL을 포함하여 객체를 생성
