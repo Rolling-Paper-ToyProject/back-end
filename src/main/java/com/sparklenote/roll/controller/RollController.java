@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.sparklenote.common.code.GlobalSuccessCode.*;
@@ -78,7 +79,7 @@ public class RollController {
      */
     @PostMapping(value = "/join/{url}")
     @Operation(summary = "학생이 Roll에 입장", description = "주어진 URL과 학급 코드를 사용하여 Roll에 입장합니다.")
-    public ResponseEntity<SnResponse<RollJoinResponseDto>> joinRoll(@PathVariable("url") String url, @Valid @RequestBody RollJoinRequestDto joinRequestDto, HttpServletResponse response) {
+    public ResponseEntity<SnResponse<RollJoinResponseDto>> joinRoll(@PathVariable("url") String url, @Valid @RequestBody RollJoinRequestDto joinRequestDto, HttpServletResponse response) throws IOException {
         RollJoinResponseDto responseDto = rollService.joinRoll(url, joinRequestDto, response);
         return ResponseEntity.ok(new SnResponse<>(SUCCESS, responseDto));
     }

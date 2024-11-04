@@ -24,7 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -101,7 +103,7 @@ public class RollService {
         return RollResponseDTO.fromRoll(updatedRoll,userId);
     }
 
-    public RollJoinResponseDto joinRoll(String url, RollJoinRequestDto joinRequestDto, HttpServletResponse response) {
+    public RollJoinResponseDto joinRoll(String url, RollJoinRequestDto joinRequestDto, HttpServletResponse response) throws IOException {
         // Roll 조회 및 학급 코드 검증
         Roll roll = rollRepository.findByUrl(url)
                 .orElseThrow(() -> new RollException(ROLL_NOT_FOUND));
@@ -137,9 +139,11 @@ public class RollService {
                 refreshTokenExpiration
         );
 
-        response.setHeader("Authorization", "Bearer " + accessToken);
-        response.setHeader("RefreshToken", refreshToken);
+        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth/callback")
+                .fragment("token=" + accessToken + "&refreshToken=" + refreshToken)
+                .build().toUriString();
 
+        response.sendRedirect(targetUrl);
         // 응답 DTO 생성
 
         return RollJoinResponseDto.builder()
