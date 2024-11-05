@@ -1,7 +1,6 @@
 package com.sparklenote.user.controller;
 
 import com.sparklenote.common.response.SnResponse;
-import com.sparklenote.user.dto.request.TokenRequestDTO;
 import com.sparklenote.user.dto.response.TokenResponseDTO;
 import com.sparklenote.user.dto.response.UserInfoResponseDTO;
 import com.sparklenote.user.service.UserService;
@@ -33,10 +32,9 @@ public class UserController {
 
     @GetMapping("/info")
     @Operation(summary = "/user/info", description = "userId와 name을 클라이언트로 전달")
-    public ResponseEntity<SnResponse<UserInfoResponseDTO>> info(@RequestHeader("Authorization") String authorizationHeader) {
-        UserInfoResponseDTO userInfo = userService.getUserInfo(authorizationHeader);
+    public ResponseEntity<SnResponse<UserInfoResponseDTO>> info() {
+        UserInfoResponseDTO userInfo = userService.getUserInfo();
         return ResponseEntity.status(SUCCESS.getStatus())
                 .body(new SnResponse<>(SUCCESS, userInfo));
-
     }
 }

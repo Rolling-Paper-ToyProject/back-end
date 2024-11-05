@@ -1,21 +1,20 @@
 package com.sparklenote.user.service;
 
 import com.sparklenote.common.exception.UserException;
-import com.sparklenote.domain.entity.User;
 import com.sparklenote.domain.enumType.Role;
 import com.sparklenote.domain.repository.UserRepository;
 import com.sparklenote.user.dto.response.TokenResponseDTO;
 import com.sparklenote.user.dto.response.UserInfoResponseDTO;
 import com.sparklenote.user.jwt.JWTUtil;
+import com.sparklenote.user.oAuth2.CustomOAuth2User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 import static com.sparklenote.common.error.code.UserErrorCode.TOKEN_IS_NOT_VALID;
-import static com.sparklenote.common.error.code.UserErrorCode.USER_NOT_FOUND;
 
 
 @Slf4j
@@ -46,30 +45,45 @@ public class UserService {
         return new TokenResponseDTO(newAccessToken);
     }
 
-    public UserInfoResponseDTO getUserInfo(String accessToken) {
+    public UserInfoResponseDTO getUserInfo() {
+        log.debug("getUserInfo method called");
 
-        String token = extractToken(accessToken);
+        String name = getCustomOAuth2User();
+        log.debug("Retrieved name from CustomOAuth2User: {}", name);
 
-        String username = jwtUtil.getUsername(token);
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-        if (optionalUser.isEmpty()) {
-            throw new UserException(USER_NOT_FOUND);
-        }
-
-        Long userId = optionalUser.get().getId();
-        String name = optionalUser.get().getName();
-
-        UserInfoResponseDTO userInfoResponseDTO = UserInfoResponseDTO.builder()
-                .userId(userId)
+        UserInfoResponseDTO responseDTO = UserInfoResponseDTO.builder()
                 .name(name)
                 .build();
-        return userInfoResponseDTO;
+
+        log.debug("Created UserInfoResponseDTO with name: {}", responseDTO.getName());
+        return responseDTO;
     }
 
-    private String extractToken(String authorizationHeader) {
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            return authorizationHeader.substring(7);
+    private static String getCustomOAuth2User() {
+        log.debug("getCustomOAuth2User method called");
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.debug("Authentication from SecurityContext: {}", authentication);
+
+        if (authentication == null) {
+            log.error("Authentication is null");
+            return null;
         }
-        throw new UserException(TOKEN_IS_NOT_VALID);
+
+        Object principal = authentication.getPrincipal();
+        log.debug("Principal class type: {}", principal.getClass().getName());
+
+        if (!(principal instanceof CustomOAuth2User)) {
+            log.error("Principal is not CustomOAuth2User");
+            return null;
+        }
+
+        CustomOAuth2User customOAuth2User = (CustomOAuth2User) principal;
+        log.debug("Successfully cast to CustomOAuth2User");
+
+        String name = customOAuth2User.getName();
+        log.debug("Retrieved name from CustomOAuth2User in getCustomOAuth2User: {}", name);
+
+        return name;
     }
 }
