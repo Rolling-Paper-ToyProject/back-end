@@ -75,8 +75,6 @@ public class RollService {
         return RollResponseDTO.fromRoll(savedRoll, user.getId()); // RollResponseDTO에 URL 포함
     }
 
-
-
     public void deleteRoll(Long id) {
         Roll roll = rollRepository.findById(id)
                 .orElseThrow(() -> new RollException(ROLL_NOT_FOUND));
