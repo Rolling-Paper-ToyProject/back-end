@@ -3,6 +3,8 @@ package com.sparklenote.user.jwt;
 import com.sparklenote.domain.enumType.Role;
 import com.sparklenote.user.dto.response.UserResponseDTO;
 import com.sparklenote.user.oAuth2.CustomOAuth2User;
+import com.sparklenote.user.student.CustomStudentDetails;
+import com.sparklenote.user.student.dto.StudentResponseDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +26,6 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         // 소셜 로그인 경로에 대한 요청은 JWT 필터링을 하지 않음
-        // 필터링을 무시할 경로 추가
         String requestURI = request.getRequestURI();
         if (requestURI.startsWith("/login") ||
                 requestURI.startsWith("/oauth2/authorization") ||
@@ -34,40 +35,53 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Authorization 헤더에서 JWT 토큰 추출
         String authorizationHeader = request.getHeader("Authorization");
-        // 헤더에 Authorization 값이 없으면 필터 체인 계속 진행
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 'Bearer ' 접두사 제거 후 실제 토큰만 추출
         String token = authorizationHeader.substring(7);
-        // 토큰 소멸 시간, 유효성 검증
         if (jwtUtil.isExpired(token) || !jwtUtil.isValidToken(token)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 토큰에서 username과 role 획득
+        // 토큰에서 정보 획득
         String username = jwtUtil.getUsername(token);
         String roleName = jwtUtil.getRole(token);
         Role role = Role.valueOf(roleName);
 
-        // userDTO를 생성하여 값 set
-        UserResponseDTO userResponseDTO = new UserResponseDTO();
-        userResponseDTO.setUsername(username);
-        userResponseDTO.setRole(role);
+        // 역할에 따라 다른 인증 객체 생성
+        Authentication authToken;
+        if (role == Role.TEACHER) {  // 선생님인 경우
+            UserResponseDTO userResponseDTO = new UserResponseDTO();
+            userResponseDTO.setUsername(username);
+            userResponseDTO.setRole(role);
 
-        // UserDetails에 회원 정보 객체 담기
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User(userResponseDTO);
+            CustomOAuth2User customOAuth2User = new CustomOAuth2User(userResponseDTO);
+            authToken = new UsernamePasswordAuthenticationToken(
+                    customOAuth2User,
+                    null,
+                    customOAuth2User.getAuthorities()
+            );
+        } else {  // 학생인 경우
+            StudentResponseDTO studentResponseDTO = StudentResponseDTO.builder()
+                    .studentId(Long.parseLong(username))
+                    .name(username)
+                    .role(role)
+                    .password("")
+                    .build();
 
-        // 스프링 시큐리티 인증 토큰 생성
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
-        // 세션에 사용자 등록
+            CustomStudentDetails customStudentDetails = new CustomStudentDetails(studentResponseDTO);
+            authToken = new UsernamePasswordAuthenticationToken(
+                    customStudentDetails,
+                    null,
+                    customStudentDetails.getAuthorities()
+            );
+        }
+
         SecurityContextHolder.getContext().setAuthentication(authToken);
-
         filterChain.doFilter(request, response);
     }
 }

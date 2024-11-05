@@ -72,7 +72,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .socialType(socialType)
                     .build();
 
+            log.debug("Created UserResponseDTO - username: {}, name: {}, email: {}",
+                    userResponseDTO.getUsername(),
+                    userResponseDTO.getName(),
+                    userResponseDTO.getEmail());
+
+
+            CustomOAuth2User customOAuth2User = new CustomOAuth2User(userResponseDTO);
+            log.debug("Created CustomOAuth2User - name: {}", customOAuth2User.getName());
+
             return new CustomOAuth2User(userResponseDTO);
+
         }
         else {
             // 이미 회원이 존재하는 경우
