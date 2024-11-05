@@ -33,8 +33,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
         String username = customUserDetails.getUsername();
+        String name = customUserDetails.getName();
 
-        String accessToken = jwtUtil.createAccessToken(username, Role.TEACHER, accessTokenExpiration);
+        String accessToken = jwtUtil.createAccessToken(username, name, Role.TEACHER, accessTokenExpiration);
         String refreshToken = jwtUtil.createRefreshToken(username, refreshTokenExpiration);
 
         // 프론트엔드의 콜백 페이지로 리다이렉트, 프래그먼트에 토큰을 추가

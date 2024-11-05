@@ -25,10 +25,11 @@ public class JWTUtil {
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), SignatureAlgorithm.HS256.getJcaName());
     }
 
-    public String createAccessToken(String username, Role role, Long expiredMs) {
+    public String createAccessToken(String username,String name, Role role, Long expiredMs) {
         return Jwts.builder()
                 .claim("username", username)
                 .claim("role", role.name())
+                .claim("name",name)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)
@@ -53,6 +54,11 @@ public class JWTUtil {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
     }
+    public String getName(String token) {
+
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("name", String.class);
+    }
+
 
     public Boolean isExpired(String token) {
         try {

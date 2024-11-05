@@ -128,6 +128,7 @@ public class RollService {
         // JWT 토큰 생성
         String accessToken = jwtUtil.createAccessToken(
                 student.getId().toString(),
+                student.getName(),
                 Role.STUDENT, // 학생의 역할을 지정
                 accessTokenExpiration
         );

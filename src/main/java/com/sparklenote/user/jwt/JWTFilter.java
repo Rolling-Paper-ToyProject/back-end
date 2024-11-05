@@ -50,14 +50,18 @@ public class JWTFilter extends OncePerRequestFilter {
         // 토큰에서 정보 획득
         String username = jwtUtil.getUsername(token);
         String roleName = jwtUtil.getRole(token);
+        String name = jwtUtil.getName(token);
         Role role = Role.valueOf(roleName);
 
         // 역할에 따라 다른 인증 객체 생성
         Authentication authToken;
         if (role == Role.TEACHER) {  // 선생님인 경우
-            UserResponseDTO userResponseDTO = new UserResponseDTO();
-            userResponseDTO.setUsername(username);
-            userResponseDTO.setRole(role);
+
+            UserResponseDTO userResponseDTO = UserResponseDTO.builder()
+                    .username(username)
+                    .name(name)  // name 설정 확인
+                    .role(role)
+                    .build();
 
             CustomOAuth2User customOAuth2User = new CustomOAuth2User(userResponseDTO);
             authToken = new UsernamePasswordAuthenticationToken(
