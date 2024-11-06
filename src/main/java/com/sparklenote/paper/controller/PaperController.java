@@ -25,14 +25,14 @@ public class PaperController {
     private final PaperService paperService;
 
     @Operation(summary = "Create paper", description = "paper 생성")
-    @PostMapping     // POST /paper
+    @PostMapping("/rolls/{rollId}")     // POST /paper/rolls/{rollId}
     public ResponseEntity<SnResponse<PaperResponseDTO>> createPaper(
+            @PathVariable Long rollId,
             @Valid @RequestBody PaperRequestDTO paperRequestDTO) {
-        PaperResponseDTO responseDTO = paperService.createPaper(paperRequestDTO);
+        PaperResponseDTO responseDTO = paperService.createPaper(rollId, paperRequestDTO);
         return ResponseEntity.status(CREATE.getStatus())
                 .body(new SnResponse<>(CREATE, responseDTO));
     }
-
     @Operation(summary = "Delete paper", description = "paper 삭제")
     @DeleteMapping("/{id}")    // DELETE /paper/{id}
     public ResponseEntity<SnResponse<Void>> deletePaper(@PathVariable Long id) {
