@@ -18,3 +18,8 @@ logging:
     org.springframework: DEBUG
     com.sparklenote: DEBUG
     com.sparklenote.user.jwt: DEBUG  # JWT 관련 로그 상세히 보기
+
+springdoc:
+    swagger-ui:
+      operations-sorter: get-post-put-delete
+      tagsSorter: alpha
