@@ -7,12 +7,13 @@ import com.sparklenote.domain.repository.UserRepository;
 import com.sparklenote.user.dto.response.TokenResponseDTO;
 import com.sparklenote.user.dto.response.UserInfoResponseDTO;
 import com.sparklenote.user.jwt.JWTUtil;
+import com.sparklenote.user.oAuth2.CustomOAuth2User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 import static com.sparklenote.common.error.code.UserErrorCode.TOKEN_IS_NOT_VALID;
 import static com.sparklenote.common.error.code.UserErrorCode.USER_NOT_FOUND;
@@ -23,12 +24,11 @@ import static com.sparklenote.common.error.code.UserErrorCode.USER_NOT_FOUND;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository;
     @Value("${jwt.accessExpiration}") // 30분
     private Long accessTokenExpiration;
 
     private final JWTUtil jwtUtil;
-
+    private final UserRepository userRepository;
     /**
      * 토큰을 재발급 하는 메소드
      */
@@ -41,35 +41,43 @@ public class UserService {
         // 리프레시 토큰에서 사용자 정보 추출
         String username = jwtUtil.getUsername(refreshToken);
 
+        // DB에서 사용자 정보 조회
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
         // 새로운 엑세스 토큰 생성
-        String newAccessToken = jwtUtil.createAccessToken(username, Role.TEACHER, accessTokenExpiration);
+        String newAccessToken = jwtUtil.createAccessToken(
+                username,
+                user.getName(),
+                Role.TEACHER,
+                accessTokenExpiration
+        );
         return new TokenResponseDTO(newAccessToken);
     }
 
-    public UserInfoResponseDTO getUserInfo(String accessToken) {
-
-        String token = extractToken(accessToken);
-
-        String username = jwtUtil.getUsername(token);
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-        if (optionalUser.isEmpty()) {
-            throw new UserException(USER_NOT_FOUND);
-        }
-
-        Long userId = optionalUser.get().getId();
-        String name = optionalUser.get().getName();
-
-        UserInfoResponseDTO userInfoResponseDTO = UserInfoResponseDTO.builder()
-                .userId(userId)
+    public UserInfoResponseDTO getUserInfo() {
+        String name = getCustomOAuth2User();
+        UserInfoResponseDTO responseDTO = UserInfoResponseDTO.builder()
                 .name(name)
                 .build();
-        return userInfoResponseDTO;
+        return responseDTO;
     }
 
-    private String extractToken(String authorizationHeader) {
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            return authorizationHeader.substring(7);
+    private static String getCustomOAuth2User() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null) {
+            return null;
         }
-        throw new UserException(TOKEN_IS_NOT_VALID);
+
+        Object principal = authentication.getPrincipal();
+
+        if (!(principal instanceof CustomOAuth2User customOAuth2User)) {
+            return null;
+        }
+        String name = customOAuth2User.getName();
+
+        return name;
     }
 }

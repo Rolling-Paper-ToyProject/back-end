@@ -30,16 +30,16 @@ public class PaperController {
 
     @Operation(summary = "/paper/create", description = "paper 생성")
     @PostMapping("/create")
-    public ResponseEntity<SnResponse<PaperResponseDTO>> createPaper(@Valid @RequestBody PaperRequestDTO paperRequestDTO, @RequestHeader("Authorization") String authorizationHeader) {
-        PaperResponseDTO responseDTO = paperService.createPaper(paperRequestDTO, authorizationHeader);
+    public ResponseEntity<SnResponse<PaperResponseDTO>> createPaper(@Valid @RequestBody PaperRequestDTO paperRequestDTO) {
+        PaperResponseDTO responseDTO = paperService.createPaper(paperRequestDTO);
         return ResponseEntity.status(CREATE.getStatus())
                 .body(new SnResponse<>(CREATE, responseDTO));
     }
 
     @Operation(summary = "/paper/delete/{id}", description = "paper 삭제")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<SnResponse<Void>> deletePaper(@PathVariable("id") Long id, @RequestHeader("Authorization") String authorizationHeader) {
-        paperService.deletePaper(id, authorizationHeader);
+    public ResponseEntity<SnResponse<Void>> deletePaper(@PathVariable("id") Long id) {
+        paperService.deletePaper(id);
         return ResponseEntity.status(SUCCESS.getStatus())
                 .body(new SnResponse<>(SUCCESS, null));
     }
@@ -48,9 +48,8 @@ public class PaperController {
     @PutMapping("/update/{id}")
     public ResponseEntity<SnResponse<PaperResponseDTO>> updatePaper(
             @PathVariable("id") Long id,
-            @RequestBody PaperRequestDTO paperRequestDTO,
-            @RequestHeader("Authorization") String authorizationHeader) {
-        PaperResponseDTO responseDTO = paperService.updatePaper(id, paperRequestDTO, authorizationHeader);
+            @RequestBody PaperRequestDTO paperRequestDTO) {
+        PaperResponseDTO responseDTO = paperService.updatePaper(id, paperRequestDTO);
         return ResponseEntity.status(SUCCESS.getStatus())
                 .body(new SnResponse<>(SUCCESS, responseDTO));
     }
@@ -62,5 +61,4 @@ public class PaperController {
         return ResponseEntity.status(SUCCESS.getStatus())
                 .body(new SnResponse<>(SUCCESS, papers));
     }
-
 }
