@@ -5,22 +5,23 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public enum UserErrorCode implements BaseErrorCode{
+public enum StudentErrorCode implements BaseErrorCode {
 
-    TOKEN_IS_NOT_VALID(401, "유효하지 않은 토큰입니다.", HttpStatus.UNAUTHORIZED),
-    USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+    STUDENT_NOT_FOUND(404, "해당 학생 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 
     private final int errorCode;
     private final String errorMessage;
     private final HttpStatus status;
 
-    UserErrorCode(int errorCode, String errorMessage, HttpStatus status) {
+    StudentErrorCode(int errorCode, String message, HttpStatus status) {
         this.errorCode = errorCode;
-        this.errorMessage = errorMessage;
+        this.errorMessage = message;
         this.status = status;
     }
 
     @Override
     public ErrorResponse getErrorResponse() {
         return new ErrorResponse(this.errorCode, this.errorMessage);
-    }}
+    }
+}
+

@@ -30,7 +30,7 @@ public class Roll extends BaseTimeEntity {
 
     private String url;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 

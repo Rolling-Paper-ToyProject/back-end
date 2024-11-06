@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PaperRequestDTO {
 
+    private Long rollId;
     private String content;
 
 }

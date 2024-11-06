@@ -34,10 +34,21 @@ public class Paper extends BaseTimeEntity{
     private List<Sticker> stickers = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
+    @JoinColumn(name = "student_id", nullable = true)
     private Student student; // 학생에 대한 외래 키 (User)
 
-    public static Paper fromDtoToPaper(PaperRequestDTO paperRequestDTO) {
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = true)
+    private User user;
+
+    public static Paper studentFromDtoToPaper(PaperRequestDTO paperRequestDTO) {
+        Paper paper = Paper.builder()
+                .content(paperRequestDTO.getContent())
+                .build();
+        return paper;
+    }
+
+    public static Paper userFromDtoToPaper(PaperRequestDTO paperRequestDTO) {
         Paper paper = Paper.builder()
                 .content(paperRequestDTO.getContent())
                 .build();

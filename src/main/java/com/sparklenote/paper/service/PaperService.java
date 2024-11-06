@@ -1,12 +1,14 @@
 package com.sparklenote.paper.service;
 
-import com.sparklenote.common.exception.PaperException;
+import com.sparklenote.common.exception.*;
 import com.sparklenote.domain.entity.Paper;
 import com.sparklenote.domain.entity.Roll;
 import com.sparklenote.domain.entity.Student;
+import com.sparklenote.domain.entity.User;
 import com.sparklenote.domain.repository.PaperRepository;
 import com.sparklenote.domain.repository.RollRepository;
 import com.sparklenote.domain.repository.StudentRepository;
+import com.sparklenote.domain.repository.UserRepository;
 import com.sparklenote.paper.dto.request.PaperRequestDTO;
 import com.sparklenote.paper.dto.response.PaperResponseDTO;
 import com.sparklenote.user.oAuth2.CustomOAuth2User;
@@ -24,8 +26,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 
+import static com.sparklenote.common.error.code.GlobalErrorCode.INTERNAL_SERVER_ERROR;
+import static com.sparklenote.common.error.code.GlobalErrorCode.UNAUTHORIZED;
 import static com.sparklenote.common.error.code.PaperErrorCode.PAPER_DELETE_FORBIDDEN;
 import static com.sparklenote.common.error.code.PaperErrorCode.PAPER_NOT_FOUND;
+import static com.sparklenote.common.error.code.RollErrorCode.ROLL_NOT_FOUND;
+import static com.sparklenote.common.error.code.StudentErrorCode.STUDENT_NOT_FOUND;
+import static com.sparklenote.common.error.code.UserErrorCode.USER_NOT_FOUND;
 
 
 @Slf4j
@@ -39,6 +46,7 @@ public class PaperService {
 
     // 클라이언트 연결을 유지하기 위한 SseEmitter List (클라이언트가 여기에 저장)
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
+    private final UserRepository userRepository;
 
     // 이벤트 발생 시 클라이언트에게 정보를 보내는 메소드
     private void sendPaperEvent(String eventType, Paper paper) {
@@ -60,22 +68,36 @@ public class PaperService {
      */
     public PaperResponseDTO createPaper(PaperRequestDTO paperRequestDTO) {
         Long studentId = getAuthenticatedStudentId();
+        Roll roll = rollRepository.findById(paperRequestDTO.getRollId())
+                .orElseThrow(() -> new RollException(ROLL_NOT_FOUND));
+        boolean isTeacher = roll.getUser().getId().equals(studentId); // Roll 생성자가 곧 선생님
+        log.info("studentId: " + studentId + " rollId: " + roll.getId() + " isTeacher: " + isTeacher);
+        if (isTeacher) {
+            User user = userRepository.findById(studentId)
+                    .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+            Paper paper = Paper.userFromDtoToPaper(paperRequestDTO).toBuilder()
+                    .user(user)
+                    .roll(roll) // Student 객체에서 가져온 Roll 설정
+                    .build();
+            Paper savedPaper = paperRepository.save(paper);
+            sendPaperEvent("create", savedPaper);
 
-        // 학생 조회
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new IllegalArgumentException("학생을 찾을 수 없습니다."));
-        Roll roll = student.getRoll();
+            // 응답 DTO 생성
+            return new PaperResponseDTO(savedPaper.getId(), savedPaper.getContent(), user.getName());
+        } else {
+            Student student = studentRepository.findById(studentId)
+                    .orElseThrow(() -> new StudentException(STUDENT_NOT_FOUND));
+            Paper paper = Paper.studentFromDtoToPaper(paperRequestDTO).toBuilder()
+                    .student(student)
+                    .roll(roll) // Student 객체에서 가져온 Roll 설정
+                    .build();
+            Paper savedPaper = paperRepository.save(paper);
+            sendPaperEvent("create", savedPaper);
 
-        // Paper 엔티티 생성 및 학생 설정
-        Paper paper = Paper.fromDtoToPaper(paperRequestDTO).toBuilder()
-                .student(student)
-                .roll(roll) // Student 객체에서 가져온 Roll 설정
-                .build();
-        Paper savedPaper = paperRepository.save(paper);
-        sendPaperEvent("create", savedPaper);
+            // 응답 DTO 생성
+            return new PaperResponseDTO(savedPaper.getId(), savedPaper.getContent(), student.getName());
+        }
 
-        // 응답 DTO 생성
-        return new PaperResponseDTO(savedPaper.getId(), savedPaper.getContent(), student.getName());
     }
 
     /**
@@ -132,7 +154,7 @@ public class PaperService {
     private Long getAuthenticatedStudentId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
-            throw new SecurityException("인증 정보가 없습니다.");
+            throw new GlobalException(UNAUTHORIZED);
         }
 
         Object principal = authentication.getPrincipal();
@@ -142,10 +164,10 @@ public class PaperService {
             CustomStudentDetails studentDetails = (CustomStudentDetails) principal;
             return studentDetails.getStudentId();
         } else if (principal instanceof CustomOAuth2User) {
-            // 선생님 로그인의 경우
-            throw new SecurityException("학생만 접근 가능한 기능입니다.");
+            // 선생 로그인의 경우
+            CustomOAuth2User oAuth2User = (CustomOAuth2User) principal;
+            return oAuth2User.getUserId();
         }
-
-        throw new SecurityException("인증된 사용자 정보를 찾을 수 없습니다.");
+        throw new GlobalException(INTERNAL_SERVER_ERROR);
     }
-    }
+}

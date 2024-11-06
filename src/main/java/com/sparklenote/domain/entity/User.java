@@ -36,6 +36,10 @@ public class User extends BaseTimeEntity{
     @OneToMany(mappedBy = "user")
     private List<Roll> rolls = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Paper> papers = new ArrayList<>();
+
     public void updateFromDTO(UserRequestDTO userRequestDTO) {
         if (userRequestDTO.getEmail() != null) {
             this.email = userRequestDTO.getEmail();
