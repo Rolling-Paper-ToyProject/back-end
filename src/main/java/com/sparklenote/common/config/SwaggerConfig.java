@@ -1,5 +1,6 @@
 package com.sparklenote.common.config;
 
+import io.swagger.v3.oas.models.tags.Tag;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -15,19 +16,24 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        String jwtSchemeName = "Authorization";  // JWT 인증을 위한 헤더 명칭
+        String jwtSchemeName = "Authorization";
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
         Components components = new Components()
                 .addSecuritySchemes(jwtSchemeName, new SecurityScheme()
                         .name(jwtSchemeName)
-                        .type(SecurityScheme.Type.HTTP)  // HTTP 타입을 명시
+                        .type(SecurityScheme.Type.HTTP)
                         .scheme("bearer")
                         .bearerFormat("JWT"));
 
         return new OpenAPI()
-                .components(components)  // JWT 설정을 적용한 컴포넌트를 추가
-                .security(List.of(securityRequirement))  // 보안 요구 사항 설정
-                .info(apiInfo());  // API 정보 설정
+                .components(components)
+                .security(List.of(securityRequirement))
+                .info(apiInfo())
+                .tags(List.of(          // 태그 순서 지정
+                        new Tag().name("1. Roll Controller").description("Roll API"),
+                        new Tag().name("2. Paper Controller").description("Paper API"),
+                        new Tag().name("3. User Controller").description("User API")
+                ));
     }
 
     private Info apiInfo() {

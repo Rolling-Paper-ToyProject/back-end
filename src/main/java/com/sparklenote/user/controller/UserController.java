@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import static com.sparklenote.common.code.GlobalSuccessCode.SUCCESS;
 
+@Tag(name = "3. User Controller", description = "소셜로그인, 토큰 관련 API")
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
-@RestController
-@Tag(name = "User Controller", description = "소셜로그인, 토큰 관련 API")
 public class UserController {
 
     private final UserService userService;
@@ -30,8 +30,8 @@ public class UserController {
                 .body(new SnResponse<>(SUCCESS, newAccessToken));
     }
 
-    @GetMapping("/info")
-    @Operation(summary = "/user/info", description = "userId와 name을 클라이언트로 전달")
+    @GetMapping("/profile")
+    @Operation(summary = "/user/profile", description = "userId와 name을 클라이언트로 전달")
     public ResponseEntity<SnResponse<UserInfoResponseDTO>> info() {
         UserInfoResponseDTO userInfo = userService.getUserInfo();
         return ResponseEntity.status(SUCCESS.getStatus())
