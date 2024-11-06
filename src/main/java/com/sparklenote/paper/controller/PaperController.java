@@ -25,7 +25,7 @@ public class PaperController {
     private final PaperService paperService;
 
     @Operation(summary = "Create paper", description = "paper 생성")
-    @PostMapping("/rolls/{rollId}")     // POST /paper/rolls/{rollId}
+    @PostMapping("/rolls/{rollId}")
     public ResponseEntity<SnResponse<PaperResponseDTO>> createPaper(
             @PathVariable Long rollId,
             @Valid @RequestBody PaperRequestDTO paperRequestDTO) {
@@ -34,7 +34,7 @@ public class PaperController {
                 .body(new SnResponse<>(CREATE, responseDTO));
     }
     @Operation(summary = "Delete paper", description = "paper 삭제")
-    @DeleteMapping("/{id}")    // DELETE /paper/{id}
+    @DeleteMapping("/{id}")
     public ResponseEntity<SnResponse<Void>> deletePaper(@PathVariable Long id) {
         paperService.deletePaper(id);
         return ResponseEntity.status(SUCCESS.getStatus())
@@ -42,7 +42,7 @@ public class PaperController {
     }
 
     @Operation(summary = "Update paper", description = "paper 수정")
-    @PutMapping("/{id}")    // PUT /paper/{id}
+    @PutMapping("/{id}")
     public ResponseEntity<SnResponse<PaperResponseDTO>> updatePaper(
             @PathVariable Long id,
             @RequestBody PaperRequestDTO paperRequestDTO) {
@@ -52,7 +52,7 @@ public class PaperController {
     }
 
     @Operation(summary = "Get papers by roll", description = "roll에 속한 paper 조회")
-    @GetMapping("/rolls/{rollId}")    // GET /paper/rolls/{rollId}
+    @GetMapping("/rolls/{rollId}")
     public ResponseEntity<SnResponse<List<PaperResponseDTO>>> getPapersByRollId(
             @PathVariable Long rollId) {
         List<PaperResponseDTO> papers = paperService.getPapers(rollId);

@@ -35,11 +35,11 @@ public class Paper extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "student_id")
-    private Student student;  // 학생이 작성한 경우
+    private Student student;
 
     @ManyToOne
     @JoinColumn(name = "user_id")    // User(teacher) 추가
-    private User user;               // 선생님이 작성한 경우
+    private User user;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "created_by")

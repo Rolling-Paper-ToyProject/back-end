@@ -71,7 +71,7 @@ public class PaperService {
             User user = userRepository.findByUsername(oAuth2User.getUsername())
                     .orElseThrow(() -> new IllegalArgumentException("선생님을 찾을 수 없습니다."));
 
-            Roll roll = rollRepository.findById(rollId)  // paperRequestDTO.getRollId() 대신 파라미터 사용
+            Roll roll = rollRepository.findById(rollId)
                     .orElseThrow(() -> new IllegalArgumentException("학급을 찾을 수 없습니다."));
 
             savedPaper = Paper.createTeacherPaper(paperRequestDTO, user, roll);
