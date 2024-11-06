@@ -9,6 +9,8 @@ import com.sparklenote.domain.enumType.Role;
 import com.sparklenote.domain.repository.RollRepository;
 import com.sparklenote.domain.repository.StudentRepository;
 import com.sparklenote.domain.repository.UserRepository;
+import com.sparklenote.paper.dto.response.PaperResponseDTO;
+import com.sparklenote.paper.service.PaperService;
 import com.sparklenote.roll.dto.request.RollCreateRequestDto;
 import com.sparklenote.roll.dto.request.RollJoinRequestDto;
 import com.sparklenote.roll.dto.request.RollUpdateRequestDto;
@@ -37,7 +39,6 @@ import static com.sparklenote.common.error.code.UserErrorCode.USER_NOT_FOUND;
 @Service
 @RequiredArgsConstructor
 public class RollService {
-
     @Value("${jwt.accessExpiration}")
     private Long accessTokenExpiration;
 
@@ -48,6 +49,7 @@ public class RollService {
     private final UserRepository userRepository;
     private final UrlGenerator urlGenerator;
     private final StudentRepository studentRepository;
+    private final PaperService paperService;
     private final JWTUtil jwtUtil;
 
     public RollResponseDTO createRoll(RollCreateRequestDto createRequestDto) {
@@ -109,7 +111,6 @@ public class RollService {
             throw new RollException(INVALID_CLASS_CODE);
         }
 
-
         // 학생 조회 또는 등록
         Optional<Student> optionalStudent = studentRepository.findByNameAndPinNumber(
                 joinRequestDto.getName(),
@@ -138,12 +139,16 @@ public class RollService {
         );
 
         response.setHeader("Authorization", "Bearer " + accessToken);
-        response.setHeader("RefreshToken", refreshToken);
+        response.setHeader("RefreshToken", "Bearer " + refreshToken);
+
+        // Paper 목록 조회
+        List<PaperResponseDTO> papers = paperService.getPapers(roll.getId());
 
         // 응답 DTO 생성
-
         return RollJoinResponseDto.builder()
+                .rollName(roll.getRollName())
                 .name(student.getName())
+                .papers(papers)
                 .build();
     }
 
