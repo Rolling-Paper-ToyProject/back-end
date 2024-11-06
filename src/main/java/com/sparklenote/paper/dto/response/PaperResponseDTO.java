@@ -6,12 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class PaperResponseDTO {
-
     private Long paperId;
     private String content;
-    private String studentName;
+    private String authorName;
+    private String authorRole;
 }
