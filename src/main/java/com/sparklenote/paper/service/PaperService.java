@@ -1,6 +1,8 @@
 package com.sparklenote.paper.service;
 
 import com.sparklenote.common.exception.PaperException;
+import com.sparklenote.common.exception.RollException;
+import com.sparklenote.common.exception.UserException;
 import com.sparklenote.domain.entity.Paper;
 import com.sparklenote.domain.entity.Roll;
 import com.sparklenote.domain.entity.Student;
@@ -28,6 +30,8 @@ import java.util.stream.Collectors;
 
 import static com.sparklenote.common.error.code.PaperErrorCode.PAPER_DELETE_FORBIDDEN;
 import static com.sparklenote.common.error.code.PaperErrorCode.PAPER_NOT_FOUND;
+import static com.sparklenote.common.error.code.RollErrorCode.ROLL_NOT_FOUND;
+import static com.sparklenote.common.error.code.UserErrorCode.USER_NOT_FOUND;
 
 
 @Slf4j
@@ -82,17 +86,17 @@ public class PaperService {
         if (authentication.getPrincipal() instanceof CustomOAuth2User oAuth2User) {
             // 선생님(User)인 경우
             User user = userRepository.findByUsername(oAuth2User.getUsername())
-                    .orElseThrow(() -> new IllegalArgumentException("선생님을 찾을 수 없습니다."));
+                    .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
             Roll roll = rollRepository.findById(rollId)
-                    .orElseThrow(() -> new IllegalArgumentException("학급을 찾을 수 없습니다."));
+                    .orElseThrow(() -> new RollException(ROLL_NOT_FOUND));
 
             savedPaper = Paper.createTeacherPaper(paperRequestDTO, user, roll);
         } else {
             // 학생인 경우
             CustomStudentDetails studentDetails = (CustomStudentDetails) authentication.getPrincipal();
             Student student = studentRepository.findById(studentDetails.getStudentId())
-                    .orElseThrow(() -> new IllegalArgumentException("학생을 찾을 수 없습니다."));
+                    .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
             savedPaper = Paper.createStudentPaper(paperRequestDTO, student, student.getRoll());
         }
