@@ -25,27 +25,27 @@ public class PaperController {
     private final PaperService paperService;
 
     @Operation(summary = "Create paper", description = "paper 생성")
-    @PostMapping     // POST /paper
+    @PostMapping  ("/rolls/{rollId}")   // POST /paper
     public ResponseEntity<SnResponse<PaperResponseDTO>> createPaper(
+            @PathVariable(name = "rollId") Long rollId,
             @Valid @RequestBody PaperRequestDTO paperRequestDTO) {
-        PaperResponseDTO responseDTO = paperService.createPaper(paperRequestDTO);
+        PaperResponseDTO responseDTO = paperService.createPaper(rollId, paperRequestDTO);
         return ResponseEntity.status(CREATE.getStatus())
                 .body(new SnResponse<>(CREATE, responseDTO));
     }
 
     @Operation(summary = "Delete paper", description = "paper 삭제")
     @DeleteMapping("/{id}")    // DELETE /paper/{id}
-    public ResponseEntity<SnResponse<Void>> deletePaper(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePaper(@PathVariable(name = "id") Long id) {
         paperService.deletePaper(id);
-        return ResponseEntity.status(SUCCESS.getStatus())
-                .body(new SnResponse<>(SUCCESS, null));
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Update paper", description = "paper 수정")
 
     @PutMapping("/{id}")    // PUT /paper/{id}
     public ResponseEntity<SnResponse<PaperResponseDTO>> updatePaper(
-            @PathVariable Long id,
+            @PathVariable(name = "id") Long id,
             @RequestBody PaperRequestDTO paperRequestDTO) {
         PaperResponseDTO responseDTO = paperService.updatePaper(id, paperRequestDTO);
         return ResponseEntity.status(SUCCESS.getStatus())
@@ -55,7 +55,7 @@ public class PaperController {
     @Operation(summary = "Get papers by roll", description = "roll에 속한 paper 조회")
     @GetMapping("/rolls/{rollId}")    // GET /paper/rolls/{rollId}
     public ResponseEntity<SnResponse<List<PaperResponseDTO>>> getPapersByRollId(
-            @PathVariable Long rollId) {
+            @PathVariable(name = "rollId") Long rollId) {
         List<PaperResponseDTO> papers = paperService.getPapers(rollId);
         return ResponseEntity.status(SUCCESS.getStatus())
                 .body(new SnResponse<>(SUCCESS, papers));
