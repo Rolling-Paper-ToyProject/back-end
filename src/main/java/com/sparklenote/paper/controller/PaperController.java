@@ -25,10 +25,11 @@ public class PaperController {
     private final PaperService paperService;
 
     @Operation(summary = "Create paper", description = "paper 생성")
-    @PostMapping     // POST /paper
+    @PostMapping("/rolls/{rollId}")
     public ResponseEntity<SnResponse<PaperResponseDTO>> createPaper(
+            @PathVariable Long rollId,
             @Valid @RequestBody PaperRequestDTO paperRequestDTO) {
-        PaperResponseDTO responseDTO = paperService.createPaper(paperRequestDTO);
+        PaperResponseDTO responseDTO = paperService.createPaper(rollId,paperRequestDTO);
         return ResponseEntity.status(CREATE.getStatus())
                 .body(new SnResponse<>(CREATE, responseDTO));
     }
