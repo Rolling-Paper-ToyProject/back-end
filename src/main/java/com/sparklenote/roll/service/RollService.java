@@ -68,7 +68,7 @@ public class RollService {
         }
 
         // Roll 엔티티 생성
-        Roll roll = Roll.fromRollCreateDto(createRequestDto, classCode, url, user);
+        Roll roll = Roll.createRollFromDto(createRequestDto, classCode, url, user);
 
         // Roll 저장
         Roll savedRoll = rollRepository.save(roll);
@@ -77,10 +77,21 @@ public class RollService {
         return RollResponseDTO.fromRoll(savedRoll, user.getId()); // RollResponseDTO에 URL 포함
     }
 
-    public void deleteRoll(Long id) {
-        Roll roll = rollRepository.findById(id)
-                .orElseThrow(() -> new RollException(ROLL_NOT_FOUND));
-        rollRepository.delete(roll);
+    public List<RollResponseDTO> getMyRolls() {
+        // SecurityContextHolder에서 현재 로그인된 사용자 정보 가져오기
+        String username = getCustomOAuth2User();
+
+        // username으로 User 조회
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+        // 해당 사용자의 모든 Roll 조회
+        List<Roll> rolls = rollRepository.findAllByUser(user);
+
+        // Roll 목록을 DTO로 변환하여 반환
+        return rolls.stream()
+                .map(roll -> RollResponseDTO.fromRoll(roll, user.getId()))
+                .collect(Collectors.toList());
     }
 
     public RollResponseDTO updateRollName(Long id, RollUpdateRequestDto updateRequestDto) {
@@ -100,6 +111,12 @@ public class RollService {
         // 수정된 Roll 정보를 DTO로 변환하여 반환
         Long userId = roll.getUser().getId();
         return RollResponseDTO.fromRoll(updatedRoll,userId);
+    }
+
+    public void deleteRoll(Long id) {
+        Roll roll = rollRepository.findById(id)
+                .orElseThrow(() -> new RollException(ROLL_NOT_FOUND));
+        rollRepository.delete(roll);
     }
 
     public RollJoinResponseDto joinRoll(String url, RollJoinRequestDto joinRequestDto, HttpServletResponse response) {
@@ -147,27 +164,12 @@ public class RollService {
         // 응답 DTO 생성
         return RollJoinResponseDto.builder()
                 .rollName(roll.getRollName())
-                .name(student.getName())
+                .studentName(student.getName())
                 .papers(papers)
                 .build();
     }
 
-    public List<RollResponseDTO> getMyRolls() {
-        // SecurityContextHolder에서 현재 로그인된 사용자 정보 가져오기
-        String username = getCustomOAuth2User();
 
-        // username으로 User 조회
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
-
-        // 해당 사용자의 모든 Roll 조회
-        List<Roll> rolls = rollRepository.findAllByUser(user);
-
-        // Roll 목록을 DTO로 변환하여 반환
-        return rolls.stream()
-                .map(roll -> RollResponseDTO.fromRoll(roll, user.getId()))
-                .collect(Collectors.toList());
-    }
 
     private static String getCustomOAuth2User() {
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
