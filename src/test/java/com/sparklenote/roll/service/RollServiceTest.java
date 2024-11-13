@@ -13,6 +13,7 @@ import com.sparklenote.user.jwt.JWTUtil;
 import com.sparklenote.user.oAuth2.CustomOAuth2User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -72,7 +73,8 @@ public class RollServiceTest {
     }
 
     @Test
-    @DisplayName("Roll 생성 - 단위테스트")
+    @Order(1)
+    @DisplayName("Roll 생성 - 성공")
     void createRoll_success() {
 
         // GIVEN
@@ -84,12 +86,12 @@ public class RollServiceTest {
                 .username("testUsername")
                 .build();
 
-        Roll roll = Roll.fromRollCreateDto(requestDto, classCode, url, mockUser);
+        Roll roll = Roll.createRollFromDto(requestDto, classCode, url, mockUser);
 
         // Mock 설정
-        given(userRepository.findByUsername("testUsername")).willReturn(Optional.of(mockUser));
-        given(urlGenerator.generateUrl()).willReturn(url);
-        given(rollRepository.save(any(Roll.class))).willReturn(roll);
+        given(userRepository.findByUsername("testUsername")).willReturn(Optional.of(mockUser)); // username이 같으면 같은 유저로 판단
+        given(urlGenerator.generateUrl()).willReturn(url); // 같은 url이면 같은 Roll이라고 판단
+        given(rollRepository.save(any(Roll.class))).willReturn(roll); // 참조값까지 같은 필요 없으니까 러프하게 처리
 
         // WHEN : Roll 생성 메소드 호출
         RollResponseDTO response = rollService.createRoll(requestDto); // 안에서 save와 반환까지 다 완료한 상태
