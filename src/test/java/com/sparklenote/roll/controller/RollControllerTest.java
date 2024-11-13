@@ -9,8 +9,12 @@ import com.sparklenote.roll.dto.request.RollUpdateRequestDto;
 import com.sparklenote.roll.dto.response.RollJoinResponseDto;
 import com.sparklenote.roll.dto.response.RollResponseDTO;
 import com.sparklenote.roll.service.RollService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,13 +26,10 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.beans.Transient;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.sparklenote.common.error.code.RollErrorCode.ROLL_NAME_NOT_CHANGED;
 import static com.sparklenote.common.error.code.RollErrorCode.ROLL_NOT_FOUND;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -41,6 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(RollController.class) // 컨트롤러만 로드하여 테스트
+@TestMethodOrder(OrderAnnotation.class) // 테스트 메서드의 순서를 지정하기 위해 추가
 class RollControllerTest {
 
     @Autowired
@@ -53,9 +55,9 @@ class RollControllerTest {
     private RollService rollService; // 서비스 계층을 Mock으로 설정
 
     @Test
+    @Order(1)
     @DisplayName("Roll 생성 - 성공")
     @WithMockUser(username = "testUsername", roles = "TEACHER")
-        // 인증된 사용자 설정
     void createRoll_success() throws Exception {
 
         // GIVEN : ResponseDTO와 RequestDTO 설정
@@ -71,7 +73,7 @@ class RollControllerTest {
         String requestBody = objectMapper.writeValueAsString(requestDto);
 
         // WHEN
-        ResultActions result = mockMvc.perform(post("/roll/create")
+        ResultActions result = mockMvc.perform(post("/roll")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
                 .with(csrf()));
@@ -86,6 +88,7 @@ class RollControllerTest {
     }
 
     @Test
+    @Order(2)
     @DisplayName("Roll 생성 - 실패 (RollName 누락)")
     @WithMockUser(username = "testUsername", roles = "TEACHER")
     void createRoll_fail_rollNameNull() throws Exception {
@@ -94,7 +97,7 @@ class RollControllerTest {
         String requestBody = objectMapper.writeValueAsString(requestDto); // DTO를 JSON 형식으로 변환
 
         // WHEN : API 호출
-        ResultActions result = mockMvc.perform(post("/roll/create")
+        ResultActions result = mockMvc.perform(post("/roll")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
                 .with(csrf())
@@ -105,6 +108,7 @@ class RollControllerTest {
     }
 
     @Test
+    @Order(3)
     @DisplayName("Roll 조회 - 성공")
     @WithMockUser(username = "testUsername", roles = "TEACHER")
     void getRoll_success() throws Exception {
@@ -128,7 +132,7 @@ class RollControllerTest {
         given(rollService.getMyRolls()).willReturn(rollList);
 
         // When : API 호출
-        ResultActions result = mockMvc.perform(get("/roll/my/rolls")
+        ResultActions result = mockMvc.perform(get("/roll/me")
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(csrf())
         );
@@ -147,6 +151,7 @@ class RollControllerTest {
     }
 
     @Test
+    @Order(4)
     @DisplayName("Roll 조회 - 성공 (만든 Roll이 없을 때, 비어있는 상태를 반환)")
     @WithMockUser(username = "testUsername", roles = "TEACHER")
     void getRoll_failed() throws Exception {
@@ -155,7 +160,7 @@ class RollControllerTest {
         given(rollService.getMyRolls()).willReturn(Collections.emptyList());
 
         // When : API 호출
-        ResultActions result = mockMvc.perform(get("/roll/my/rolls")
+        ResultActions result = mockMvc.perform(get("/roll/me")
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(csrf())
         );
@@ -166,6 +171,7 @@ class RollControllerTest {
     }
 
     @Test
+    @Order(5)
     @DisplayName("Roll 수정 - 성공")
     @WithMockUser(username = "testUsername", roles = "TEACHER")
     void updateRoll_success() throws Exception {
@@ -183,7 +189,7 @@ class RollControllerTest {
         given(rollService.updateRollName(eq(rollId), any(RollUpdateRequestDto.class))).willReturn(responseDTO);
 
         // WHEN : API 호출
-        ResultActions result = mockMvc.perform(put("/roll/update/" + rollId)
+        ResultActions result = mockMvc.perform(put("/roll/" + rollId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto))
                 .with(csrf())
@@ -199,6 +205,7 @@ class RollControllerTest {
     }
 
     @Test
+    @Order(6)
     @DisplayName("Roll 수정 - 실패 (존재하지 않는 ID)")
     @WithMockUser(username = "testUsername", roles = "TEACHER")
     void updateRoll_fail_notFound() throws Exception {
@@ -211,7 +218,7 @@ class RollControllerTest {
                 .willThrow(new RollException(ROLL_NOT_FOUND));
 
         // WHEN : API 호출
-        ResultActions result = mockMvc.perform(put("/roll/update/" + rollId)
+        ResultActions result = mockMvc.perform(put("/roll/" + rollId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto))
                 .with(csrf()));
@@ -221,6 +228,7 @@ class RollControllerTest {
     }
 
     @Test
+    @Order(7)
     @DisplayName("Roll 삭제 - 성공")
     @WithMockUser(username = "testUsername", roles = "TEACHER")
     void deleteRoll_success() throws Exception {
@@ -230,7 +238,7 @@ class RollControllerTest {
         doNothing().when(rollService).deleteRoll(eq(rollId));
 
         // WHEN
-        ResultActions result = mockMvc.perform(delete("/roll/delete/" + rollId)
+        ResultActions result = mockMvc.perform(delete("/roll/" + rollId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(csrf())
         );
@@ -240,6 +248,7 @@ class RollControllerTest {
     }
 
     @Test
+    @Order(8)
     @DisplayName("Roll 삭제 - 실패 (존재하지 않는 ID)")
     @WithMockUser(username = "testUsername", roles = "TEACHER")
     void deleteRoll_fail_notFound() throws Exception {
@@ -249,50 +258,51 @@ class RollControllerTest {
         doThrow(new RollException(ROLL_NOT_FOUND)).when(rollService).deleteRoll(eq(rollId));
 
         // WHEN : API 호출
-        ResultActions result = mockMvc.perform(delete("/roll/delete/" + rollId)
+        ResultActions result = mockMvc.perform(delete("/roll/" + rollId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(csrf()));
 
-        // THEN : 404 Not Found 상태 코드와 예외 메시지 확인
+        // THEN : 404 Not Found 상태 코드과 예외 메시지 확인
         result.andExpect(status().isNotFound());
     }
 
-//    @Test
-//    @DisplayName("Roll 입장 - 성공 (Student가 Roll에 입장")
-//    void joinRoll_success() throws Exception {
-//
-//        SecurityContextHolder.getContext().setAuthentication(
-//                new UsernamePasswordAuthenticationToken("studentUsername", null, Collections.singletonList(new SimpleGrantedAuthority(Role.STUDENT.name())))
-//        );
-//
-//        // GIVEN
-//        String url = "abc123";
-//        RollJoinRequestDto requestDto = new RollJoinRequestDto("testUser", 1234);
-//        RollJoinResponseDto responseDto = RollJoinResponseDto.builder()
-//                .name("testUser")
-//                .studentId(123L)
-//                .build();
-//
-//       // given(rollService.joinRoll(eq(url), any(RollJoinRequestDto.class))).willReturn(responseDto);
-//
-//        // WHEN : API 호출
-//        ResultActions result = mockMvc.perform(post("/roll/join/" + url)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(objectMapper.writeValueAsString(requestDto))
-//                .with(csrf())
-//        );
-//
-//        // THEN
-//        result.andExpect(status().isOk())
-//                .andExpect(jsonPath("$.code").value(200))
-//                .andExpect(jsonPath("$.data.name").value("testUser"))
-//                .andExpect(jsonPath("$.data.accessToken").value("accessToken"))
-//                .andExpect(jsonPath("$.data.refreshToken").value("refreshToken"));
-//
-//    }
+    @Test
+    @Order(9)
+    @DisplayName("Roll 입장 - 성공 (Student가 Roll에 입장")
+    void joinRoll_success() throws Exception {
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("studentUsername", null, Collections.singletonList(new SimpleGrantedAuthority(Role.STUDENT.name())))
+        );
+
+        // GIVEN
+        String url = "abc12314";
+        RollJoinRequestDto requestDto = new RollJoinRequestDto("아니", 9876, 1234);
+        RollJoinResponseDto responseDto = RollJoinResponseDto.builder()
+                .rollName("testRoll")
+                .studentName("아니")
+                .build();
+
+        given(rollService.joinRoll(eq(url), any(RollJoinRequestDto.class), any(HttpServletResponse.class))).willReturn(responseDto);
+
+        // WHEN : API 호출
+        ResultActions result = mockMvc.perform(post("/roll/" + url + "/join")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestDto))
+                .with(csrf())
+        );
+
+        // THEN
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data.rollName").value("testRoll"))
+                .andExpect(jsonPath("$.data.studentName").value("아니"));
+
+    }
 
     @Test
-    @DisplayName("Roll 참여 - 실패 (유효하지 않은 PIN 번호)")
+    @Order(10)
+    @DisplayName("Roll 입장 - 실패 (유효하지 않은 PIN 번호)")
     void joinRoll_fail_invalidPin() throws Exception {
         // GIVEN : 유효하지 않은 PIN 번호 설정
         SecurityContextHolder.getContext().setAuthentication(
@@ -300,15 +310,15 @@ class RollControllerTest {
         );
 
         String url = "abc123";
-        RollJoinRequestDto requestDto = new RollJoinRequestDto("testStudent", 123); // PIN이 4자리가 아님
+        RollJoinRequestDto requestDto = new RollJoinRequestDto("testStudent", 1234, 123); // PIN이 4자리가 아님
 
         // WHEN : API 호출
-        ResultActions result = mockMvc.perform(post("/roll/join/" + url)
+        ResultActions result = mockMvc.perform(post("/roll/" + url + "/join")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto))
                 .with(csrf()));
 
-        // THEN : 400 상태 코드와 유효성 검사 오류 메시지 검증
+        // THEN : 400 상태 코드과 유효성 검사 오류 메시지 검증
         result.andExpect(status().isBadRequest());
     }
 
