@@ -58,7 +58,7 @@ public class RollController {
     @PreAuthorize("hasRole('TEACHER')")
     @Operation(summary = "학급 roll 수정", description = "주어진 ID로 학급 roll 이름을 수정합니다.")
     public ResponseEntity<SnResponse<RollResponseDTO>> updateRollName(
-            @PathVariable Long rollId,
+            @PathVariable(name = "rollId") Long rollId,
             @Valid @RequestBody RollUpdateRequestDto updateRequestDto) {
         RollResponseDTO responseDto = rollService.updateRollName(rollId, updateRequestDto);
         return ResponseEntity.ok(new SnResponse<>(SUCCESS, responseDto));
@@ -70,7 +70,7 @@ public class RollController {
     @DeleteMapping("/{rollId}")   // /delete 제거
     @PreAuthorize("hasRole('TEACHER')")
     @Operation(summary = "학급 roll 삭제", description = "주어진 ID를 사용하여 학급 roll을 삭제합니다.")
-    public ResponseEntity<SnResponse<Void>> deleteRoll(@PathVariable Long rollId) {
+    public ResponseEntity<SnResponse<Void>> deleteRoll(@PathVariable(name = "rollId") Long rollId) {
         rollService.deleteRoll(rollId);
         return ResponseEntity.status(NO_CONTENT.getStatus())
                 .body(new SnResponse<>(NO_CONTENT, null));
@@ -82,7 +82,7 @@ public class RollController {
     @PostMapping("/{url}/join")
     @Operation(summary = "학생이 Roll에 입장", description = "주어진 URL과 학급 코드를 사용하여 Roll에 입장합니다.")
     public ResponseEntity<SnResponse<RollJoinResponseDto>> joinRoll(
-            @PathVariable String url,
+            @PathVariable(name = "url") String url,
             @Valid @RequestBody RollJoinRequestDto joinRequestDto,
             HttpServletResponse response) {
         RollJoinResponseDto responseDto = rollService.joinRoll(url, joinRequestDto, response);
