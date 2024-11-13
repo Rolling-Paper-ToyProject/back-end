@@ -1,9 +1,6 @@
 package com.sparklenote.roll.dto.response;
 
-import com.sparklenote.domain.entity.Student;
-import com.sparklenote.domain.repository.StudentRepository;
 import com.sparklenote.paper.dto.response.PaperResponseDTO;
-import com.sparklenote.roll.dto.request.RollJoinRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +15,7 @@ import java.util.List;
 public class RollJoinResponseDto {
 
     private String rollName;
-    private String name;
+    private String studentName;
     List<PaperResponseDTO> papers;
 
 }
