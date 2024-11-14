@@ -104,12 +104,12 @@ public class RollService {
         return RollResponseDTO.fromRoll(updatedRoll,userId);
     }
 
-    public RollJoinResponseDto joinRoll(String url, RollJoinRequestDto joinRequestDto, HttpServletResponse response) throws IOException {
+    public RollJoinResponseDto joinRoll(String url, RollJoinRequestDto joinRequestDto) {
         // Roll 조회 및 학급 코드 검증
         Roll roll = rollRepository.findByUrl(url)
                 .orElseThrow(() -> new RollException(ROLL_NOT_FOUND));
 
-        if(!roll.validateClassCode(joinRequestDto.getClassCode())) {
+        if (!roll.validateClassCode(joinRequestDto.getClassCode())) {
             throw new RollException(INVALID_CLASS_CODE);
         }
 
@@ -119,30 +119,20 @@ public class RollService {
                 joinRequestDto.getPinNumber()
         );
 
-        Student student;
-        if (optionalStudent.isEmpty()) {
-            // 회원가입 처리
-            student = studentRepository.save(joinRequestDto.toStudent(roll));
-        } else {
-            // 기존 학생 정보 사용
-            student = optionalStudent.get();
-        }
+        Student student = optionalStudent.orElseGet(() -> studentRepository.save(joinRequestDto.toStudent(roll)));
 
         // JWT 토큰 생성
         String accessToken = jwtUtil.createAccessToken(
                 student.getId().toString(),
                 student.getName(),
-                Role.STUDENT, // 학생의 역할을 지정
+                Role.STUDENT,
                 accessTokenExpiration
         );
 
-        System.out.println("accessToken = " + accessToken);
         String refreshToken = jwtUtil.createRefreshToken(
                 student.getId().toString(),
                 refreshTokenExpiration
         );
-
-        redirectWithFragment(accessToken, refreshToken, response);
 
         // Paper 목록 조회
         List<PaperResponseDTO> papers = paperService.getPapers(roll.getId());
@@ -152,6 +142,8 @@ public class RollService {
                 .rollName(roll.getRollName())
                 .studentName(student.getName())
                 .papers(papers)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 

@@ -88,7 +88,7 @@ public class RollController {
             @PathVariable(name = "url") String url,
             @Valid @RequestBody RollJoinRequestDto joinRequestDto,
             HttpServletResponse response) throws IOException {
-        RollJoinResponseDto responseDto = rollService.joinRoll(url, joinRequestDto, response);
+        RollJoinResponseDto responseDto = rollService.joinRoll(url, joinRequestDto);
         return ResponseEntity.ok(new SnResponse<>(SUCCESS, responseDto));
     }
 }
