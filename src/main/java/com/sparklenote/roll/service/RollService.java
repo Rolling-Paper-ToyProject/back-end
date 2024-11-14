@@ -20,15 +20,12 @@ import com.sparklenote.roll.util.ClassCodeGenerator;
 import com.sparklenote.roll.util.UrlGenerator;
 import com.sparklenote.user.jwt.JWTUtil;
 import com.sparklenote.user.oAuth2.CustomOAuth2User;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -169,11 +166,4 @@ public class RollService {
         return customOAuth2User.getUsername();
     }
 
-    public void redirectWithFragment(String accessToken, String refreshToken, HttpServletResponse response) throws IOException {
-        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth/callback")
-                .fragment("token=" + accessToken + "&refreshToken=" + refreshToken)
-                .build().toUriString();
-
-        response.sendRedirect(targetUrl);
-    }
 }
