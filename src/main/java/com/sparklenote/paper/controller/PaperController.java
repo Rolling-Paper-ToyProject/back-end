@@ -30,9 +30,6 @@ public class PaperController {
             @PathVariable(name = "rollId") Long rollId,
             @Valid @RequestBody PaperRequestDTO paperRequestDTO) {
         PaperResponseDTO responseDTO = paperService.createPaper(rollId, paperRequestDTO);
-        return ResponseEntity.status(CREATE.getStatus())
-                .body(new SnResponse<>(CREATE, responseDTO));
-    }
 
     @Operation(summary = "Delete paper", description = "paper 삭제")
     @DeleteMapping("/{id}")    // DELETE /paper/{id}
