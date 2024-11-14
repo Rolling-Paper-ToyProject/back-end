@@ -284,8 +284,7 @@ class RollControllerTest {
                 .studentName("아니")
                 .build();
 
-        given(rollService.joinRoll(eq(url), any(RollJoinRequestDto.class), 
-            any(HttpServletResponse.class))).willReturn(responseDto);
+        given(rollService.joinRoll(eq(url), any(RollJoinRequestDto.class))).willReturn(responseDto);
 
         // WHEN : API 호출
         ResultActions result = mockMvc.perform(post("/roll/" + url + "/join")
