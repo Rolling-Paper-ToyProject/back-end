@@ -247,11 +247,12 @@ class RollControllerTest {
         result.andExpect(status().isNoContent());
     }
 
-    @Test
+@Test
     @Order(8)
     @DisplayName("Roll 삭제 - 실패 (존재하지 않는 ID)")
     @WithMockUser(username = "testUsername", roles = "TEACHER")
     void deleteRoll_fail_notFound() throws Exception {
+        // GIVEN
         Long rollId = 999L; // 존재하지 않는 ID
 
         // 서비스에서 예외 발생하도록 설정
@@ -270,9 +271,9 @@ class RollControllerTest {
     @Order(9)
     @DisplayName("Roll 입장 - 성공 (Student가 Roll에 입장")
     void joinRoll_success() throws Exception {
-
         SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken("studentUsername", null, Collections.singletonList(new SimpleGrantedAuthority(Role.STUDENT.name())))
+                new UsernamePasswordAuthenticationToken("studentUsername", null, 
+                    Collections.singletonList(new SimpleGrantedAuthority(Role.STUDENT.name())))
         );
 
         // GIVEN
@@ -283,7 +284,8 @@ class RollControllerTest {
                 .studentName("아니")
                 .build();
 
-        given(rollService.joinRoll(eq(url), any(RollJoinRequestDto.class), any(HttpServletResponse.class))).willReturn(responseDto);
+        given(rollService.joinRoll(eq(url), any(RollJoinRequestDto.class), 
+            any(HttpServletResponse.class))).willReturn(responseDto);
 
         // WHEN : API 호출
         ResultActions result = mockMvc.perform(post("/roll/" + url + "/join")
@@ -297,7 +299,6 @@ class RollControllerTest {
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data.rollName").value("testRoll"))
                 .andExpect(jsonPath("$.data.studentName").value("아니"));
-
     }
 
     @Test
@@ -306,7 +307,8 @@ class RollControllerTest {
     void joinRoll_fail_invalidPin() throws Exception {
         // GIVEN : 유효하지 않은 PIN 번호 설정
         SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken("studentUsername", null, Collections.singletonList(new SimpleGrantedAuthority(Role.STUDENT.name())))
+                new UsernamePasswordAuthenticationToken("studentUsername", null, 
+                    Collections.singletonList(new SimpleGrantedAuthority(Role.STUDENT.name())))
         );
 
         String url = "abc123";
@@ -321,5 +323,4 @@ class RollControllerTest {
         // THEN : 400 상태 코드과 유효성 검사 오류 메시지 검증
         result.andExpect(status().isBadRequest());
     }
-
 }

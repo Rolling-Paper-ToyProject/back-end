@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.sparklenote.common.code.GlobalSuccessCode.CREATE;
 import static com.sparklenote.common.code.GlobalSuccessCode.SUCCESS;
 
 @Tag(name = "2. Paper Controller", description = "페이퍼 CRUD API")
@@ -29,22 +28,20 @@ public class PaperController {
     public ResponseEntity<SnResponse<PaperResponseDTO>> createPaper(
             @PathVariable(name = "rollId") Long rollId,
             @Valid @RequestBody PaperRequestDTO paperRequestDTO) {
-        PaperResponseDTO responseDTO = paperService.createPaper(rollId,paperRequestDTO);
-        return ResponseEntity.status(CREATE.getStatus())
-                .body(new SnResponse<>(CREATE, responseDTO));
+        PaperResponseDTO responseDTO = paperService.createPaper(rollId, paperRequestDTO);
+        return ResponseEntity.status(SUCCESS.getStatus())
+                .body(new SnResponse<>(SUCCESS, responseDTO));
     }
 
     @Operation(summary = "Delete paper", description = "paper 삭제")
-    @DeleteMapping("/{id}")    // DELETE /paper/{id}
-    public ResponseEntity<SnResponse<Void>> deletePaper(@PathVariable(name = "id") Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePaper(@PathVariable(name = "id") Long id) {
         paperService.deletePaper(id);
-        return ResponseEntity.status(SUCCESS.getStatus())
-                .body(new SnResponse<>(SUCCESS, null));
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Update paper", description = "paper 수정")
-
-    @PutMapping("/{id}")    // PUT /paper/{id}
+    @PutMapping("/{id}")
     public ResponseEntity<SnResponse<PaperResponseDTO>> updatePaper(
             @PathVariable(name = "id") Long id,
             @RequestBody PaperRequestDTO paperRequestDTO) {
@@ -54,7 +51,7 @@ public class PaperController {
     }
 
     @Operation(summary = "Get papers by roll", description = "roll에 속한 paper 조회")
-    @GetMapping("/rolls/{rollId}")    // GET /paper/rolls/{rollId}
+    @GetMapping("/rolls/{rollId}")
     public ResponseEntity<SnResponse<List<PaperResponseDTO>>> getPapersByRollId(
             @PathVariable(name = "rollId") Long rollId) {
         List<PaperResponseDTO> papers = paperService.getPapers(rollId);

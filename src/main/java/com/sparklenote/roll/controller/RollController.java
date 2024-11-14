@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.sparklenote.common.code.GlobalSuccessCode.*;
@@ -25,6 +26,7 @@ import static com.sparklenote.common.code.GlobalSuccessCode.*;
 @RequiredArgsConstructor
 @RequestMapping("/roll")
 public class RollController {
+
     private final RollService rollService;
 
     /**
@@ -43,7 +45,7 @@ public class RollController {
     /**
      * 선생님이 마이페이지에서 만든 학급 게시판(Roll) 조회
      */
-    @GetMapping("/me")   // /my/rolls -> /rolls/me 로 변경
+    @GetMapping("/me")
     @PreAuthorize("hasRole('TEACHER')")
     @Operation(summary = "내 Roll 목록 조회", description = "현재 로그인한 사용자의 모든 Roll 목록을 조회합니다.")
     public ResponseEntity<SnResponse<List<RollResponseDTO>>> getMyRolls() {
@@ -54,7 +56,7 @@ public class RollController {
     /**
      * 학급 게시판(Roll) 이름 수정
      */
-    @PutMapping("/{rollId}")   // /update 제거
+    @PutMapping("/{rollId}")
     @PreAuthorize("hasRole('TEACHER')")
     @Operation(summary = "학급 roll 수정", description = "주어진 ID로 학급 roll 이름을 수정합니다.")
     public ResponseEntity<SnResponse<RollResponseDTO>> updateRollName(
@@ -67,10 +69,11 @@ public class RollController {
     /**
      * 학급 게시판(Roll) 삭제
      */
-    @DeleteMapping("/{rollId}")   // /delete 제거
+    @DeleteMapping("/{rollId}")
     @PreAuthorize("hasRole('TEACHER')")
     @Operation(summary = "학급 roll 삭제", description = "주어진 ID를 사용하여 학급 roll을 삭제합니다.")
-    public ResponseEntity<SnResponse<Void>> deleteRoll(@PathVariable(name = "rollId") Long rollId) {
+    public ResponseEntity<SnResponse<Void>> deleteRoll(
+            @PathVariable(name = "rollId") Long rollId) {
         rollService.deleteRoll(rollId);
         return ResponseEntity.status(NO_CONTENT.getStatus())
                 .body(new SnResponse<>(NO_CONTENT, null));
@@ -84,7 +87,7 @@ public class RollController {
     public ResponseEntity<SnResponse<RollJoinResponseDto>> joinRoll(
             @PathVariable(name = "url") String url,
             @Valid @RequestBody RollJoinRequestDto joinRequestDto,
-            HttpServletResponse response) {
+            HttpServletResponse response) throws IOException {
         RollJoinResponseDto responseDto = rollService.joinRoll(url, joinRequestDto, response);
         return ResponseEntity.ok(new SnResponse<>(SUCCESS, responseDto));
     }
