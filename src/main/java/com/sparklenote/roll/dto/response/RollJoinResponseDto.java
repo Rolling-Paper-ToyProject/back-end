@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class RollJoinResponseDto {
 
+    private Long rollId;
     private String rollName;
     private String studentName;
     private List<PaperResponseDTO> papers;

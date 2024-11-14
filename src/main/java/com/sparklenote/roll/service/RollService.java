@@ -141,6 +141,7 @@ public class RollService {
                 .papers(papers)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .rollId(roll.getId())
                 .build();
     }
 
