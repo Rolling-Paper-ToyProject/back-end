@@ -20,8 +20,11 @@ import com.sparklenote.roll.util.ClassCodeGenerator;
 import com.sparklenote.roll.util.UrlGenerator;
 import com.sparklenote.user.jwt.JWTUtil;
 import com.sparklenote.user.oAuth2.CustomOAuth2User;
-import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -102,6 +105,7 @@ public class RollServiceTest {
                 .build();
 
         Roll roll = Roll.createRollFromDto(requestDto, classCode, url, mockUser);
+
 
         given(userRepository.findByUsername("testUsername")).willReturn(Optional.of(mockUser)); // username이 같으면 같은 유저로 판단
         given(urlGenerator.generateUrl()).willReturn(url); // 같은 url이면 같은 Roll이라고 판단
