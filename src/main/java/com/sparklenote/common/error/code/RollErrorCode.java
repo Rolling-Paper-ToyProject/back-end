@@ -11,7 +11,8 @@ public enum RollErrorCode implements BaseErrorCode {
 	ROLL_NOT_FOUND(404, "Roll을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 	UNAUTHORIZED_STUDENT(403, "Student는 Roll을 생성할 수 없습니다.", HttpStatus.UNAUTHORIZED),
 	ROLL_NAME_NOT_CHANGED(400, "Roll 이름이 변경되지 않았습니다.", HttpStatus.BAD_REQUEST),
-	INVALID_CLASS_CODE(400, "학급코드가 일치하지 않습니다", HttpStatus.BAD_REQUEST);
+	INVALID_CLASS_CODE(400, "학급코드가 일치하지 않습니다", HttpStatus.BAD_REQUEST),
+	CLASS_CODE_GENERATION_ERROR(400, "클래스 코드생성 에러가 발생했습니다.", HttpStatus.BAD_REQUEST);
 
 
 	private final int errorCode;
