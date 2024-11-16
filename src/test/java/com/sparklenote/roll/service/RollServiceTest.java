@@ -380,7 +380,7 @@ public class RollServiceTest {
         List<PaperResponseDTO> papers = List.of(new PaperResponseDTO());
 
         given(rollRepository.findByUrl(url)).willReturn(Optional.of(roll));
-        given(studentRepository.findByNameAndPinNumber("홍길동", 1010)).willReturn(Optional.of(student));
+        given(studentRepository.findByNameAndPinNumberAndRollId("홍길동", 1010, 1L)).willReturn(Optional.of(student));
         given(studentRepository.save(any(Student.class))).willReturn(student);
         given(paperService.getPapers(roll.getId())).willReturn(papers);
 
@@ -456,7 +456,7 @@ public class RollServiceTest {
         List<PaperResponseDTO> papers = List.of(new PaperResponseDTO());
 
         given(rollRepository.findByUrl(url)).willReturn(Optional.of(roll));
-        given(studentRepository.findByNameAndPinNumber("홍길동", 1010)).willReturn(Optional.empty());
+        given(studentRepository.findByNameAndPinNumberAndRollId("홍길동", 1010, 1L)).willReturn(Optional.empty());
         given(studentRepository.save(any(Student.class))).willReturn(student);
         given(paperService.getPapers(roll.getId())).willReturn(papers);
 
@@ -493,7 +493,7 @@ public class RollServiceTest {
                 .build();
 
         given(rollRepository.findByUrl(url)).willReturn(Optional.of(roll));
-        given(studentRepository.findByNameAndPinNumber(student.getName(), 1234)).willReturn(Optional.of(student));
+        given(studentRepository.findByNameAndPinNumberAndRollId(student.getName(), 1234, 1L)).willReturn(Optional.of(student));
         given(paperService.getPapers(roll.getId())).willReturn(Collections.emptyList());
 
         //WHEN
