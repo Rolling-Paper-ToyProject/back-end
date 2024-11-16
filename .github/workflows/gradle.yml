@@ -34,7 +34,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: build/libs/*.jar
-          target: ~/app/app.jar
+          target: ~/sparkle-note
 
       # 5. AWS에서 Docker Compose로 컨테이너 갱신
       - name: Restart application with Docker Compose
@@ -44,7 +44,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ~/app
+            cd ~/sparkle-note
             echo "Restarting Docker containers..."
             docker-compose down
             docker-compose up -d
