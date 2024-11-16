@@ -110,13 +110,17 @@ public class RollService {
             throw new RollException(INVALID_CLASS_CODE);
         }
 
-        // 학생 조회 또는 등록
-        Optional<Student> optionalStudent = studentRepository.findByNameAndPinNumber(
+        Optional<Student> optionalStudent = studentRepository.findByNameAndPinNumberAndRollId(
                 joinRequestDto.getName(),
-                joinRequestDto.getPinNumber()
+                joinRequestDto.getPinNumber(),
+                roll.getId()
         );
 
-        Student student = optionalStudent.orElseGet(() -> studentRepository.save(joinRequestDto.toStudent(roll)));
+        Student student = optionalStudent.orElseGet(() -> {
+            // 없으면 새로운 학생으로 등록
+            Student newStudent = joinRequestDto.toStudent(roll);
+            return studentRepository.save(newStudent);
+        });
 
         // JWT 토큰 생성
         String accessToken = jwtUtil.createAccessToken(
