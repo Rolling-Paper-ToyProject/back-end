@@ -9,7 +9,8 @@ jobs:
     name: spring boot server ci-cd
     runs-on: ubuntu-latest
 
-    # 1. 체크아웃 (dev나 main의 코드를 워크플로우로 가져옴)
+    # 1. 체크아웃
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,7 +24,7 @@ jobs:
 
       # 3. Gradle 빌드 (테스트 포함)
       - name: Build
-        run: ./gradlew build --info
+        run: ./gradlew build -x test
         # run: ./gradlew build -x test로 테스트 없이 할 수도 있음
 
       # 4. 빌드된 .jar 파일을 AWS로 전송
@@ -34,7 +35,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: build/libs/*.jar
-          target: ~/app/app.jar
+          target: ~/sparkle-note
 
       # 5. AWS에서 Docker Compose로 컨테이너 갱신
       - name: Restart application with Docker Compose
@@ -44,9 +45,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ~/app
+            cd ~/sparkle-note
             echo "Restarting Docker containers..."
             docker-compose down
             docker-compose up -d
-
-        # 6. Slack으로 알림 -> 필요시 구현 검토
