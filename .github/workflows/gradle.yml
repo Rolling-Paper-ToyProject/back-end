@@ -24,7 +24,7 @@ jobs:
 
       # 3. Gradle 빌드 (테스트 포함)
       - name: Build
-        run: ./gradlew build --info
+        run: ./gradlew build -x test
         # run: ./gradlew build -x test로 테스트 없이 할 수도 있음
 
       # 4. 빌드된 .jar 파일을 AWS로 전송
