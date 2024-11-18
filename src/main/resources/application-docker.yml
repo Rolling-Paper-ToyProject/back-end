@@ -4,7 +4,7 @@ spring:
       on-profile: docker
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${RDS_ENDPOINT}:${DB_PORT}/${DB_NAME}  # 여기를 수정
+    url: jdbc:mysql://${RDS_ENDPOINT}:${DB_PORT}/${DB_NAME}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
@@ -13,6 +13,9 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
       ddl-auto: update
     show-sql: true
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
+
   data:
     redis:
       host: redis
