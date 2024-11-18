@@ -17,7 +17,7 @@ import org.hibernate.validator.constraints.Range;
 public class RollJoinRequestDto {
 
     @NotBlank(message = "이름은 필수입니다.")
-    @Pattern(regexp = "^[가-힣a-zA-Z\\s]*$", message = "이름은 한글과 영문만 허용됩니다.")
+    @Pattern(regexp = "^[가-힣a-zA-Z]*$", message = "이름은 한글과 영문만 허용됩니다.")
     @Size(min = 1, max = 5, message = "이름은 1자 이상 5자 이하여야 합니다.")
     private String name;
 
