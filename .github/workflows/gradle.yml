@@ -2,7 +2,7 @@ name: sparkle-note-deploy
 
 on:
   push:
-    branches: [ "dev" , "main"," dev-workspace"]
+    branches: [ "dev" , "main","dev-workspace"]
 
 jobs:
   deploy:
