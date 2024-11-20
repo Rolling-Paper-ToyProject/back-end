@@ -59,6 +59,7 @@ public class UserService {
         String name = getCustomOAuth2User();
         UserInfoResponseDTO responseDTO = UserInfoResponseDTO.builder()
                 .name(name)
+                .role(Role.TEACHER.name())
                 .build();
         return responseDTO;
     }
