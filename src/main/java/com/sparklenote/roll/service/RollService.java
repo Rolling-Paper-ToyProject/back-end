@@ -146,6 +146,7 @@ public class RollService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .rollId(roll.getId())
+                .role(Role.STUDENT.name())
                 .build();
     }
 

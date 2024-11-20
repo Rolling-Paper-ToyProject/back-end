@@ -20,4 +20,5 @@ public class RollJoinResponseDto {
     private List<PaperResponseDTO> papers;
     private String accessToken;
     private String refreshToken;
+    private String role;
 }
