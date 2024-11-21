@@ -63,9 +63,8 @@ public class SecurityConfig {
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        configuration.setAllowedOrigins(Collections.singletonList("https://sparklenote.site"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
-                        //configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setMaxAge(3600L);
 
@@ -101,10 +100,10 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/**").permitAll()
-                        .anyRequest().authenticated());
-
+                        .requestMatchers(permitAllRequestMatchers()).permitAll() // 전체 허용 경로
+                        .requestMatchers(userAuthRequestMatchers()).authenticated() // 인증 필요한 경로
+                        .anyRequest().denyAll() // 추가로 인증되지 않은 요청은 차단
+                );
         //세션 설정 : STATELSS (추후 학생들의 로그인 방식이 정확해지면 변경 예정)
         http
                 .sessionManagement((session) -> session
@@ -115,8 +114,7 @@ public class SecurityConfig {
                 .logout((logout) -> logout
                 .logoutUrl("/logout")  // 로그아웃 엔드포인트 설정
                 .addLogoutHandler(customLogoutHandler)  // 커스텀 로그아웃 핸들러 추가
-                .logoutSuccessUrl("http://localhost:3000/login")  // 로그아웃 성공 후 리다이렉트할 URL (지금은 메인페이지의 주소가 정확하지 않아서 로그인 페이지로 리다이렉트 설정 해놓았음)
-                 // logoutSuccessUrl("/index.html") -> 처럼 설정하면 됨
+                .logoutSuccessUrl("https://sparklenote.site/login")
                 .invalidateHttpSession(true)  // 세션 무효화
                 .deleteCookies("Authorization", "RefreshToken")  // 로그아웃 시 쿠키 삭제
                 .permitAll());
@@ -130,8 +128,9 @@ public class SecurityConfig {
 
     private RequestMatcher[] permitAllRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
-          antMatcher(POST, "/user/login"),
-          antMatcher(POST, "/roll/join")
+              antMatcher(POST, "/user/login"),
+              antMatcher(POST, "/roll/join"),
+              antMatcher(GET, "/swagger-ui/**")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
@@ -140,16 +139,17 @@ public class SecurityConfig {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher(POST, "/user/tokenRefresh"),
                 antMatcher(GET, "/user/info"),
+                antMatcher(GET, "user/profile"),
 
                 antMatcher(POST, "/roll/create"),
-                antMatcher(PUT, "/roll/update/"),
+                antMatcher(PUT, "/roll/update"),
                 antMatcher(GET, "/roll/my/rolls"),
-                antMatcher(DELETE, "/roll/delete/"),
+                antMatcher(DELETE, "/roll/delete"),
 
                 antMatcher(POST, "/paper/create"),
-                antMatcher(PUT, "/paper/update/"),
-                antMatcher(GET, "/paper/"),
-                antMatcher(DELETE, "/paper/delete/")
+                antMatcher(PUT, "/paper/update"),
+                antMatcher(GET, "/paper"),
+                antMatcher(DELETE, "/paper/delete")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
