@@ -67,7 +67,6 @@ public class RollController {
      * 학급 게시판(Roll) 삭제
      */
     @DeleteMapping("/{rollId}")
-    @PreAuthorize("hasRole('TEACHER')")
     @Operation(summary = "학급 roll 삭제", description = "주어진 ID를 사용하여 학급 roll을 삭제합니다.")
     public ResponseEntity<SnResponse<Void>> deleteRoll(
             @PathVariable(name = "rollId") Long rollId) {
