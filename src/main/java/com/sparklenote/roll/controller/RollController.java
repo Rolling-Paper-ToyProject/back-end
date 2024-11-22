@@ -33,7 +33,6 @@ public class RollController {
      * 학급 게시판(Roll) 생성
      */
     @PostMapping
-    @PreAuthorize("hasRole('TEACHER')")
     @Operation(summary = "학급 roll 생성", description = "학급 roll 생성")
     public ResponseEntity<SnResponse<RollResponseDTO>> createRoll(
             @Valid @RequestBody RollCreateRequestDto createRequestDto) {
@@ -46,7 +45,6 @@ public class RollController {
      * 선생님이 마이페이지에서 만든 학급 게시판(Roll) 조회
      */
     @GetMapping("/me")
-    @PreAuthorize("hasRole('TEACHER')")
     @Operation(summary = "내 Roll 목록 조회", description = "현재 로그인한 사용자의 모든 Roll 목록을 조회합니다.")
     public ResponseEntity<SnResponse<List<RollResponseDTO>>> getMyRolls() {
         List<RollResponseDTO> rollList = rollService.getMyRolls();
@@ -57,7 +55,6 @@ public class RollController {
      * 학급 게시판(Roll) 이름 수정
      */
     @PutMapping("/{rollId}")
-    @PreAuthorize("hasRole('TEACHER')")
     @Operation(summary = "학급 roll 수정", description = "주어진 ID로 학급 roll 이름을 수정합니다.")
     public ResponseEntity<SnResponse<RollResponseDTO>> updateRollName(
             @PathVariable(name = "rollId") Long rollId,

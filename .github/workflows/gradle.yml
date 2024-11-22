@@ -48,6 +48,7 @@ jobs:
             cd ~/sparkle-note
             echo "Restarting Docker containers..."
             docker-compose down
-            docker-compose up -d
+            docker rmi sparkle-note-backend
+            docker-compose up --build -d
 
         # 6. Slack으로 알림 -> 필요시 구현 검토
