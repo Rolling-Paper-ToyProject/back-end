@@ -14,7 +14,7 @@ import com.sparklenote.domain.repository.UserRepository;
 import com.sparklenote.paper.dto.request.PaperRequestDTO;
 import com.sparklenote.paper.dto.response.PaperResponseDTO;
 import com.sparklenote.user.oAuth2.CustomOAuth2User;
-import com.sparklenote.user.student.CustomStudentDetails;
+import com.sparklenote.student.userDetails.CustomStudentDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
