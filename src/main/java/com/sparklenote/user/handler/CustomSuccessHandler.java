@@ -39,7 +39,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String refreshToken = jwtUtil.createRefreshToken(username, refreshTokenExpiration);
 
         // 프론트엔드의 콜백 페이지로 리다이렉트, 프래그먼트에 토큰을 추가
-        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth/callback")
+        String targetUrl = UriComponentsBuilder.fromUriString("https://sparklenote.site/oauth/callback")
                 .fragment("token=" + accessToken + "&refreshToken=" + refreshToken)
                 .build().toUriString();
 
