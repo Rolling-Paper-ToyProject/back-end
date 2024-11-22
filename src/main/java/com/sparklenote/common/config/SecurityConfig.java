@@ -139,7 +139,7 @@ public class SecurityConfig {
     private RequestMatcher[] userAuthRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher(POST, "/user/tokenRefresh"),
-                antMatcher(GET, "user/profile"),
+                antMatcher(GET, "/user/profile"),
 
                 antMatcher(POST, "/roll"),
                 antMatcher(PUT, "/roll/*"),
