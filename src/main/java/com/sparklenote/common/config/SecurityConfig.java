@@ -129,7 +129,7 @@ public class SecurityConfig {
     private RequestMatcher[] permitAllRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
               antMatcher(POST, "/user/login"),
-              antMatcher(POST, "/roll/join"),
+              antMatcher(POST, "/roll/*/join"),
               antMatcher(GET, "/swagger-ui/**")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
@@ -138,18 +138,17 @@ public class SecurityConfig {
     private RequestMatcher[] userAuthRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher(POST, "/user/tokenRefresh"),
-                antMatcher(GET, "/user/info"),
                 antMatcher(GET, "user/profile"),
 
-                antMatcher(POST, "/roll/create"),
-                antMatcher(PUT, "/roll/update"),
-                antMatcher(GET, "/roll/my/rolls"),
-                antMatcher(DELETE, "/roll/delete"),
+                antMatcher(POST, "/roll"),
+                antMatcher(PUT, "/roll/*"),
+                antMatcher(GET, "/roll/me"),
+                antMatcher(DELETE, "/roll/*"),
 
-                antMatcher(POST, "/paper/create"),
-                antMatcher(PUT, "/paper/update"),
-                antMatcher(GET, "/paper"),
-                antMatcher(DELETE, "/paper/delete")
+                antMatcher(POST, "/paper/rolls/*"),
+                antMatcher(PUT, "/paper/*"),
+                antMatcher(GET, "/paper/rolls/*"),
+                antMatcher(DELETE, "/paper/*")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
