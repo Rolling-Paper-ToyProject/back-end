@@ -140,12 +140,6 @@ public class SecurityConfig {
                 antMatcher(GET, "/swagger-ui/**"),
                 antMatcher(GET, "/v3/api-docs/**")
         ));
-
-        // 파비콘, 정적 리소스 요청에 대한 접근 허용 추가
-        requestMatchers.add(antMatcher(GET, "/roll/**/favicon/**"));
-        requestMatchers.add(antMatcher(GET, "/static/**"));
-        requestMatchers.add(antMatcher(GET, "/public/**"));
-
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
 
