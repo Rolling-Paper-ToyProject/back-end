@@ -6,6 +6,7 @@ import com.sparklenote.user.jwt.JWTFilter;
 import com.sparklenote.user.jwt.JWTUtil;
 import com.sparklenote.user.oAuth2.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -96,6 +98,13 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService))
                         .successHandler(customSuccessHandler)
                 );
+        // 인증되지 않은 사용자 리디렉션 방지 (로그인 페이지로 리디렉션하지 않음)
+        http.exceptionHandling(customizer ->
+                customizer.authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+                })
+        );
 
         //경로별 인가 작업
         http
@@ -114,9 +123,8 @@ public class SecurityConfig {
                 .logout((logout) -> logout
                 .logoutUrl("/logout")  // 로그아웃 엔드포인트 설정
                 .addLogoutHandler(customLogoutHandler)  // 커스텀 로그아웃 핸들러 추가
-                .logoutSuccessUrl("/login")
+                .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)  // 세션 무효화
-                .deleteCookies("Authorization", "RefreshToken")  // 로그아웃 시 쿠키 삭제
                 .permitAll());
 
         return http.build();
@@ -125,7 +133,6 @@ public class SecurityConfig {
     /**
      * 권한 없이 허용하는 endpoint
      */
-
     private RequestMatcher[] permitAllRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
               antMatcher(POST, "/user/login"),
@@ -134,6 +141,18 @@ public class SecurityConfig {
               antMatcher(GET, "/v3/api-docs/**"),
               antMatcher(GET, "/roll/*/join")
         );
+      
+        List<RequestMatcher> requestMatchers = new ArrayList<>(List.of(
+                antMatcher(POST, "/user/login"),
+                antMatcher(POST, "/roll/*/join"),
+                antMatcher(GET, "/swagger-ui/**"),
+                antMatcher(GET, "/v3/api-docs/**")
+        ));
+
+        // 파비콘, 정적 리소스 요청에 대한 접근 허용 추가
+        requestMatchers.add(antMatcher(GET, "/roll/**/favicon/**"));
+        requestMatchers.add(antMatcher(GET, "/static/**"));
+        requestMatchers.add(antMatcher(GET, "/public/**"));
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
 
@@ -146,6 +165,7 @@ public class SecurityConfig {
                 antMatcher(PUT, "/roll/*"),
                 antMatcher(GET, "/roll/me"),
                 antMatcher(DELETE, "/roll/*"),
+                antMatcher(GET, "/roll/*/join"),
 
                 antMatcher(POST, "/paper/rolls/*"),
                 antMatcher(PUT, "/paper/*"),

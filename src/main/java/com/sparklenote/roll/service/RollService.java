@@ -63,7 +63,7 @@ public class RollService {
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         if (user.getRole() == Role.STUDENT) {
-            throw new RollException(UNAUTHORIZED_STUDENT);
+            throw new RollException(UNAUTHORIZED_ACCESS);
         }
 
         // Roll 엔티티 생성
@@ -77,8 +77,23 @@ public class RollService {
     }
 
     public void deleteRoll(Long id) {
+        // 현재 로그인한 사용자 확인
+        String username = getCustomOAuth2User();
+
+        // username으로 User 조회
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+        // Roll 조회
         Roll roll = rollRepository.findById(id)
                 .orElseThrow(() -> new RollException(ROLL_NOT_FOUND));
+
+        // Roll의 소유자와 현재 사용자가 일치하는지 확인
+        if (!roll.getUser().getId().equals(user.getId())) {
+            throw new RollException(UNAUTHORIZED_ACCESS);
+        }
+
+        // 검증이 완료된 후 삭제
         rollRepository.delete(roll);
     }
 
@@ -171,5 +186,4 @@ public class RollService {
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return customOAuth2User.getUsername();
     }
-
 }
