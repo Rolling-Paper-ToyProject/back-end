@@ -322,4 +322,6 @@ class RollControllerTest {
         // THEN : 400 상태 코드과 유효성 검사 오류 메시지 검증
         result.andExpect(status().isBadRequest());
     }
+
+
 }
