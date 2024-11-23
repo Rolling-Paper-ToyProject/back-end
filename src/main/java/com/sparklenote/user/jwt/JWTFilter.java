@@ -14,6 +14,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.util.AntPathMatcher;
+
 
 import java.io.IOException;
 
@@ -21,6 +23,8 @@ import java.io.IOException;
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -30,7 +34,7 @@ public class JWTFilter extends OncePerRequestFilter {
         if (requestURI.startsWith("/login") ||
                 requestURI.startsWith("/oauth2/authorization") ||
                 requestURI.startsWith("/login/oauth2/code") ||
-                requestURI.startsWith("/roll/*/join")) {
+                pathMatcher.match("/roll/*/join", requestURI)){
             filterChain.doFilter(request, response);
             return;
         }
