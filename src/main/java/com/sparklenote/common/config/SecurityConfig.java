@@ -131,7 +131,8 @@ public class SecurityConfig {
               antMatcher(POST, "/user/login"),
               antMatcher(POST, "/roll/*/join"),
               antMatcher(GET, "/swagger-ui/**"),
-              antMatcher(GET, "/v3/api-docs/**")
+              antMatcher(GET, "/v3/api-docs/**"),
+              antMatcher(GET, "/roll/*/join")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }

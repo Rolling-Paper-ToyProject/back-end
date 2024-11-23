@@ -87,4 +87,10 @@ public class RollController {
         RollJoinResponseDto responseDto = rollService.joinRoll(url, joinRequestDto);
         return ResponseEntity.ok(new SnResponse<>(SUCCESS, responseDto));
     }
+
+    @GetMapping("/{url}/join")
+    @Operation(summary = "학생이 Roll에 입장", description = "주어진 URL과 학급 코드를 사용하여 Roll에 입장합니다.")
+    public ResponseEntity<String> getJoinedRolls(@PathVariable(name = "url") String url) {
+        return ResponseEntity.ok("새로고침이 성공적으로 처리되었습니다.");
+    }
 }
