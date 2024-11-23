@@ -5,6 +5,8 @@ import com.sparklenote.student.dto.response.StudentResponseDTO;
 import com.sparklenote.student.userDetails.CustomStudentDetails;
 import com.sparklenote.user.dto.response.UserResponseDTO;
 import com.sparklenote.user.oAuth2.CustomOAuth2User;
+import com.sparklenote.student.userDetails.CustomStudentDetails;
+import com.sparklenote.student.dto.response.StudentResponseDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +16,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.util.AntPathMatcher;
+
 
 import java.io.IOException;
 
@@ -21,6 +25,8 @@ import java.io.IOException;
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
