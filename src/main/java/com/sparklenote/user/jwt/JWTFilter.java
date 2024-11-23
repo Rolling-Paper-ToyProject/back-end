@@ -30,7 +30,7 @@ public class JWTFilter extends OncePerRequestFilter {
         if (requestURI.startsWith("/login") ||
                 requestURI.startsWith("/oauth2/authorization") ||
                 requestURI.startsWith("/login/oauth2/code") ||
-                requestURI.startsWith("/roll/join/")) {
+                requestURI.startsWith("/roll/*/join")) {
             filterChain.doFilter(request, response);
             return;
         }
