@@ -1,6 +1,6 @@
-package com.sparklenote.user.student;
+package com.sparklenote.student.userDetails;
 
-import com.sparklenote.user.student.dto.StudentResponseDTO;
+import com.sparklenote.student.dto.response.StudentResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

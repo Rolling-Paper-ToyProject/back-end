@@ -1,8 +1,9 @@
-package com.sparklenote.user.student;
+package com.sparklenote.student.service;
 
 import com.sparklenote.domain.entity.Student;
 import com.sparklenote.domain.repository.StudentRepository;
-import com.sparklenote.user.student.dto.StudentResponseDTO;
+import com.sparklenote.student.dto.response.StudentResponseDTO;
+import com.sparklenote.student.userDetails.CustomStudentDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

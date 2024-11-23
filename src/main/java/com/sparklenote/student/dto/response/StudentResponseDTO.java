@@ -1,4 +1,4 @@
-package com.sparklenote.user.student.dto;
+package com.sparklenote.student.dto.response;
 
 import com.sparklenote.domain.enumType.Role;
 import lombok.AllArgsConstructor;

@@ -140,6 +140,7 @@ public class SecurityConfig {
                 antMatcher(GET, "/swagger-ui/**"),
                 antMatcher(GET, "/v3/api-docs/**")
         ));
+
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
 
