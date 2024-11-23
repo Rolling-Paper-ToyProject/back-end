@@ -1,10 +1,10 @@
 package com.sparklenote.user.jwt;
 
 import com.sparklenote.domain.enumType.Role;
+import com.sparklenote.student.dto.response.StudentResponseDTO;
+import com.sparklenote.student.userDetails.CustomStudentDetails;
 import com.sparklenote.user.dto.response.UserResponseDTO;
 import com.sparklenote.user.oAuth2.CustomOAuth2User;
-import com.sparklenote.student.userDetails.CustomStudentDetails;
-import com.sparklenote.student.dto.response.StudentResponseDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,8 +14,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.util.AntPathMatcher;
-
 
 import java.io.IOException;
 
@@ -23,8 +21,6 @@ import java.io.IOException;
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
-    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -33,8 +29,7 @@ public class JWTFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         if (requestURI.startsWith("/login") ||
                 requestURI.startsWith("/oauth2/authorization") ||
-                requestURI.startsWith("/login/oauth2/code") ||
-                pathMatcher.match("/roll/*/join", requestURI)){
+                requestURI.startsWith("/login/oauth2/code")) {
             filterChain.doFilter(request, response);
             return;
         }

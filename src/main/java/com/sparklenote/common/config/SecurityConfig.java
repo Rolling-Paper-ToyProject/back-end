@@ -138,16 +138,8 @@ public class SecurityConfig {
               antMatcher(POST, "/user/login"),
               antMatcher(POST, "/roll/*/join"),
               antMatcher(GET, "/swagger-ui/**"),
-              antMatcher(GET, "/v3/api-docs/**"),
-              antMatcher(GET, "/roll/*/join")
+              antMatcher(GET, "/v3/api-docs/**")
         );
-      
-        List<RequestMatcher> requestMatchers = new ArrayList<>(List.of(
-                antMatcher(POST, "/user/login"),
-                antMatcher(POST, "/roll/*/join"),
-                antMatcher(GET, "/swagger-ui/**"),
-                antMatcher(GET, "/v3/api-docs/**")
-        ));
 
         // 파비콘, 정적 리소스 요청에 대한 접근 허용 추가
         requestMatchers.add(antMatcher(GET, "/roll/**/favicon/**"));
