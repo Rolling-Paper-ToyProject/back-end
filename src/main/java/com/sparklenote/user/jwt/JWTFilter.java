@@ -25,8 +25,6 @@ import java.io.IOException;
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
-    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -35,10 +33,12 @@ public class JWTFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         if (requestURI.startsWith("/login") ||
                 requestURI.startsWith("/oauth2/authorization") ||
-                requestURI.startsWith("/login/oauth2/code")) {
+                requestURI.startsWith("/login/oauth2/code") ||
+                requestURI.startsWith("/roll/join/")) {
             filterChain.doFilter(request, response);
             return;
         }
+
 
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {

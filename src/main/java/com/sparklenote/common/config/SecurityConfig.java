@@ -134,17 +134,18 @@ public class SecurityConfig {
      * 권한 없이 허용하는 endpoint
      */
     private RequestMatcher[] permitAllRequestMatchers() {
-        List<RequestMatcher> requestMatchers = List.of(
-              antMatcher(POST, "/user/login"),
-              antMatcher(POST, "/roll/*/join"),
-              antMatcher(GET, "/swagger-ui/**"),
-              antMatcher(GET, "/v3/api-docs/**")
-        );
+        List<RequestMatcher> requestMatchers = new ArrayList<>(List.of(
+                antMatcher(POST, "/user/login"),
+                antMatcher(POST, "/roll/*/join"),
+                antMatcher(GET, "/swagger-ui/**"),
+                antMatcher(GET, "/v3/api-docs/**")
+        ));
 
         // 파비콘, 정적 리소스 요청에 대한 접근 허용 추가
         requestMatchers.add(antMatcher(GET, "/roll/**/favicon/**"));
         requestMatchers.add(antMatcher(GET, "/static/**"));
         requestMatchers.add(antMatcher(GET, "/public/**"));
+
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
 
