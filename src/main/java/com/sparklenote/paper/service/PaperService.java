@@ -53,9 +53,11 @@ public class PaperService {
                 String authorName = getAuthorName(paper);
                 String authorRole = getAuthorRole(paper);
 
+                Long studentId = getStudentId(paper);
+
                 emitter.send(SseEmitter.event()
                         .name(eventType)
-                        .data(new PaperResponseDTO(paper.getStudent().getId(), paper.getId(), paper.getContent(), authorName, authorRole)));
+                        .data(new PaperResponseDTO(studentId, paper.getId(), paper.getContent(), authorName, authorRole)));
             } catch (Exception e) {
                 deadEmitters.add(emitter);
             }
@@ -107,8 +109,10 @@ public class PaperService {
         String authorName = getAuthorName(savedPaper);
         String authorRole = getAuthorRole(savedPaper);
 
+
+        Long studentId = getStudentId(savedPaper);
         return new PaperResponseDTO(
-                savedPaper.getStudent().getId(),
+                studentId,
                 savedPaper.getId(),
                 savedPaper.getContent(),
                 authorName,
@@ -124,8 +128,6 @@ public class PaperService {
 
         if (authentication.getPrincipal() instanceof CustomOAuth2User) {
             // 선생님은 모든 paper 삭제 가능
-            sendPaperEvent("delete", paper);
-            paperRepository.delete(paper);
         } else {
             // 학생은 자신의 paper만 삭제 가능
             CustomStudentDetails studentDetails = (CustomStudentDetails) authentication.getPrincipal();
@@ -133,9 +135,9 @@ public class PaperService {
                     !paper.getStudent().getId().equals(studentDetails.getStudentId())) {
                 throw new RuntimeException("삭제 권한이 없습니다.");
             }
-            sendPaperEvent("delete", paper);
-            paperRepository.delete(paper);
         }
+        sendPaperEvent("delete", paper);
+        paperRepository.delete(paper);
     }
 
     public PaperResponseDTO updatePaper(Long id, PaperRequestDTO paperRequestDTO) {
@@ -163,8 +165,10 @@ public class PaperService {
         String authorName = getAuthorName(updatedPaper);
         String authorRole = getAuthorRole(updatedPaper);
 
+        Long studentId = getStudentId(updatedPaper);
+
         return new PaperResponseDTO(
-                updatedPaper.getStudent().getId(),
+                studentId,
                 updatedPaper.getId(),
                 updatedPaper.getContent(),
                 authorName,
@@ -179,8 +183,11 @@ public class PaperService {
                 .map(paper -> {
                     String authorName = getAuthorName(paper);
                     String authorRole = getAuthorRole(paper);
+
+                    Long studentId = getStudentId(paper);
+
                     return new PaperResponseDTO(
-                            paper.getStudent().getId(),
+                            studentId,
                             paper.getId(),
                             paper.getContent(),
                             authorName,
@@ -188,5 +195,12 @@ public class PaperService {
                     );
                 })
                 .collect(Collectors.toList());
+    }
+
+    private Long getStudentId(Paper paper) {
+        if (paper.getStudent() != null) {
+            return paper.getStudent().getId();
+        }
+        return null;
     }
 }
