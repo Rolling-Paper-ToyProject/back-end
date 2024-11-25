@@ -1,7 +1,7 @@
 package com.sparklenote.paper.dto.response;
 
+
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PaperResponseDTO {
+    private Long studentId;
     private Long paperId;
     private String content;
     private String authorName;

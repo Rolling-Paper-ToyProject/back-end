@@ -55,7 +55,7 @@ public class PaperService {
 
                 emitter.send(SseEmitter.event()
                         .name(eventType)
-                        .data(new PaperResponseDTO(paper.getId(), paper.getContent(), authorName, authorRole)));
+                        .data(new PaperResponseDTO(paper.getStudent().getId(), paper.getId(), paper.getContent(), authorName, authorRole)));
             } catch (Exception e) {
                 deadEmitters.add(emitter);
             }
@@ -108,6 +108,7 @@ public class PaperService {
         String authorRole = getAuthorRole(savedPaper);
 
         return new PaperResponseDTO(
+                savedPaper.getStudent().getId(),
                 savedPaper.getId(),
                 savedPaper.getContent(),
                 authorName,
@@ -163,6 +164,7 @@ public class PaperService {
         String authorRole = getAuthorRole(updatedPaper);
 
         return new PaperResponseDTO(
+                updatedPaper.getStudent().getId(),
                 updatedPaper.getId(),
                 updatedPaper.getContent(),
                 authorName,
@@ -178,6 +180,7 @@ public class PaperService {
                     String authorName = getAuthorName(paper);
                     String authorRole = getAuthorRole(paper);
                     return new PaperResponseDTO(
+                            paper.getStudent().getId(),
                             paper.getId(),
                             paper.getContent(),
                             authorName,
