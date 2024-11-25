@@ -155,6 +155,7 @@ public class RollService {
 
         // 응답 DTO 생성
         return RollJoinResponseDto.builder()
+                .studentId(student.getId())
                 .rollName(roll.getRollName())
                 .studentName(student.getName())
                 .papers(papers)
