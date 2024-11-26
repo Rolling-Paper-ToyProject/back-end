@@ -122,14 +122,15 @@ public class PaperService {
 
     public void deletePaper(Long id) {
         Paper paper = paperRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Paper not found with id " + id));
+                .orElseThrow(() -> new PaperException(PAPER_NOT_FOUND));
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication.getPrincipal() instanceof CustomOAuth2User) {
+        if (authentication.getPrincipal() instanceof CustomOAuth2User oAuth2User) {
+            User user = userRepository.findByUsername(oAuth2User.getUsername())
+                    .orElseThrow(() -> new UserException(USER_NOT_FOUND));
             // 선생님은 모든 paper 삭제 가능
         } else {
-            // 학생은 자신의 paper만 삭제 가능
             CustomStudentDetails studentDetails = (CustomStudentDetails) authentication.getPrincipal();
             if (paper.getCreatedBy() != Paper.CreatedBy.STUDENT ||
                     !paper.getStudent().getId().equals(studentDetails.getStudentId())) {
@@ -140,28 +141,39 @@ public class PaperService {
         paperRepository.delete(paper);
     }
 
+
     public PaperResponseDTO updatePaper(Long id, PaperRequestDTO paperRequestDTO) {
-        Paper paper = paperRepository.findById(id)
-                .orElseThrow(() -> new PaperException(PAPER_NOT_FOUND));
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Paper paper;
+        if (authentication.getPrincipal() instanceof CustomOAuth2User oAuth2User) {
 
-        if (authentication.getPrincipal() instanceof CustomOAuth2User) {
-            // 선생님은 모든 paper 수정 가능
-            paper.updateContent(paperRequestDTO);
-        } else {
-            // 학생은 자신의 paper만 수정 가능
-            CustomStudentDetails studentDetails = (CustomStudentDetails) authentication.getPrincipal();
+            User user = userRepository.findByUsername(oAuth2User.getUsername())
+                    .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+            paper = paperRepository.findById(id)
+                    .orElseThrow(() -> new PaperException(PAPER_NOT_FOUND));
+
+        } else if (authentication.getPrincipal() instanceof CustomStudentDetails studentDetails) {
+            paper = paperRepository.findById(id)
+                    .orElseThrow(() -> new PaperException(PAPER_NOT_FOUND));
+
             if (paper.getCreatedBy() != Paper.CreatedBy.STUDENT ||
                     !paper.getStudent().getId().equals(studentDetails.getStudentId())) {
+
                 throw new PaperException(PAPER_DELETE_FORBIDDEN);
             }
-            paper.updateContent(paperRequestDTO);
+        } else {
+            throw new PaperException(PAPER_DELETE_FORBIDDEN); // 인증되지 않은 사용자
         }
 
+        // 3. 페이퍼 내용 수정
+        paper.updateContent(paperRequestDTO);
+
+        // 4. 저장 및 이벤트 전송
         Paper updatedPaper = paperRepository.save(paper);
         sendPaperEvent("update", updatedPaper);
 
+        // 5. 응답 생성
         String authorName = getAuthorName(updatedPaper);
         String authorRole = getAuthorRole(updatedPaper);
 
@@ -175,6 +187,7 @@ public class PaperService {
                 authorRole
         );
     }
+
 
     public List<PaperResponseDTO> getPapers(Long rollId) {
         List<Paper> papers = paperRepository.findByRoll_Id(rollId);
