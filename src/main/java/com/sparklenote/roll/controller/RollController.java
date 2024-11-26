@@ -9,14 +9,10 @@ import com.sparklenote.roll.dto.response.RollResponseDTO;
 import com.sparklenote.roll.service.RollService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 import java.util.List;
 
 import static com.sparklenote.common.code.GlobalSuccessCode.*;
@@ -82,16 +78,8 @@ public class RollController {
     @Operation(summary = "학생이 Roll에 입장", description = "주어진 URL과 학급 코드를 사용하여 Roll에 입장합니다.")
     public ResponseEntity<SnResponse<RollJoinResponseDto>> joinRoll(
             @PathVariable(name = "url") String url,
-            @Valid @RequestBody RollJoinRequestDto joinRequestDto,
-            HttpServletResponse response) throws IOException {
+            @Valid @RequestBody RollJoinRequestDto joinRequestDto) {
         RollJoinResponseDto responseDto = rollService.joinRoll(url, joinRequestDto);
         return ResponseEntity.ok(new SnResponse<>(SUCCESS, responseDto));
-    }
-
-    @GetMapping("/{url}/join")
-    public ResponseEntity<SnResponse<String>> checkAccess(@PathVariable String url) {
-        // 이미 Security Config에서 인증 체크를 하므로
-        // 여기까지 왔다는 건 이미 인증된 사용자
-        return ResponseEntity.ok(new SnResponse<>(SUCCESS, "authorized"));
     }
 }
