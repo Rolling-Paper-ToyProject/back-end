@@ -109,9 +109,10 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers(permitAllRequestMatchers()).permitAll() // 전체 허용 경로
-                        .requestMatchers(userAuthRequestMatchers()).authenticated() // 인증 필요한 경로
-                        .anyRequest().denyAll() // 추가로 인증되지 않은 요청은 차단
+                        .requestMatchers(permitAllRequestMatchers()).permitAll()  // 전체 허용 경로
+                        .requestMatchers(antMatcher(GET, "/user/profile")).hasAuthority("ROLE_TEACHER")  // TEACHER만 접근 가능
+                        .requestMatchers(userAuthRequestMatchers()).authenticated()  // 인증 필요한 경로
+                        .anyRequest().denyAll()  // 추가로 인증되지 않은 요청은 차단
                 );
         //세션 설정 : STATELSS (추후 학생들의 로그인 방식이 정확해지면 변경 예정)
         http
@@ -147,8 +148,6 @@ public class SecurityConfig {
     private RequestMatcher[] userAuthRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher(POST, "/user/tokenRefresh"),
-                antMatcher(GET, "/user/profile"),
-
                 antMatcher(POST, "/roll"),
                 antMatcher(PUT, "/roll/*"),
                 antMatcher(GET, "/roll/me"),
