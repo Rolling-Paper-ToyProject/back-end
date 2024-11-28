@@ -77,7 +77,7 @@ public class JWTFilter extends OncePerRequestFilter {
         } else {  // 학생인 경우
             StudentResponseDTO studentResponseDTO = StudentResponseDTO.builder()
                     .studentId(Long.parseLong(username))
-                    .name(username)
+                    .name(name)
                     .role(role)
                     .password("")
                     .build();
