@@ -4,6 +4,7 @@ import com.sparklenote.common.exception.UserException;
 import com.sparklenote.domain.entity.User;
 import com.sparklenote.domain.enumType.Role;
 import com.sparklenote.domain.repository.UserRepository;
+import com.sparklenote.student.userDetails.CustomStudentDetails;
 import com.sparklenote.user.dto.response.TokenResponseDTO;
 import com.sparklenote.user.dto.response.UserInfoResponseDTO;
 import com.sparklenote.user.jwt.JWTUtil;
@@ -56,12 +57,26 @@ public class UserService {
     }
 
     public UserInfoResponseDTO getUserInfo() {
-        String name = getCustomOAuth2User();
-        UserInfoResponseDTO responseDTO = UserInfoResponseDTO.builder()
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = auth.getPrincipal();
+
+        String name;
+        String role;
+
+        if (principal instanceof CustomOAuth2User) {
+            CustomOAuth2User oAuth2User = (CustomOAuth2User) principal;
+            name = oAuth2User.getUsername();
+            role = Role.TEACHER.name();
+        } else {
+            CustomStudentDetails studentDetails = (CustomStudentDetails) principal;
+            name = studentDetails.getUsername();
+            role = Role.STUDENT.name();
+        }
+
+        return UserInfoResponseDTO.builder()
                 .name(name)
-                .role(Role.TEACHER.name())
+                .role(role)
                 .build();
-        return responseDTO;
     }
 
     private static String getCustomOAuth2User() {
