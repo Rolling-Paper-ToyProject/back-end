@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import static com.sparklenote.common.code.GlobalSuccessCode.SUCCESS;
@@ -29,7 +30,7 @@ public class UserController {
         return ResponseEntity.status(SUCCESS.getStatus())
                 .body(new SnResponse<>(SUCCESS, newAccessToken));
     }
-
+    @PreAuthorize("hasAuthority('ROLE_TEACHER')")
     @GetMapping("/profile")
     @Operation(summary = "/user/profile", description = "userId와 name을 클라이언트로 전달")
     public ResponseEntity<SnResponse<UserInfoResponseDTO>> info() {
