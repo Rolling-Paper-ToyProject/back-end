@@ -23,6 +23,8 @@ import com.sparklenote.user.oAuth2.CustomOAuth2User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -167,22 +169,21 @@ public class RollService {
     }
 
     public List<RollResponseDTO> getMyRolls() {
-        // SecurityContextHolder에서 현재 로그인된 사용자 정보 가져오기
-        String username = getCustomOAuth2User();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (!(auth.getPrincipal() instanceof CustomOAuth2User oAuth2User)) {
+            throw new AccessDeniedException("선생님 타입만 가능합니다");
+        }
 
-        // username으로 User 조회
+        String username = oAuth2User.getUsername();
+
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        // 해당 사용자의 모든 Roll 조회
         List<Roll> rolls = rollRepository.findAllByUser(user);
-
-        // Roll 목록을 DTO로 변환하여 반환
         return rolls.stream()
                 .map(roll -> RollResponseDTO.fromRoll(roll, user.getId()))
                 .collect(Collectors.toList());
     }
-
     private static String getCustomOAuth2User() {
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return customOAuth2User.getUsername();
