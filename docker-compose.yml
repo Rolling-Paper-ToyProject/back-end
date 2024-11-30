@@ -1,25 +1,22 @@
 services:
-  mysql-db:
-    image: mysql:8.0
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${CONTAINER_NAME:-sparkle-note-backend}
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://${RDS_ENDPOINT}:3306/${DB_NAME}
     env_file:
       - .env
-    ports:
-      - "${DB_PORT:-3306}:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-    volumes:
-      - ./db/initdb.d:/docker-entrypoint-initdb.d
-      - ./db/initdb.d/my.cnf:/etc/mysql/my.cnf
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD}"]
-      interval: 10s
-      timeout: 15s
-      retries: 5
+    depends_on:
+      redis:
+        condition: service_healthy
     networks:
       - app-network
-    restart: unless-stopped
-
+    restart: no
   redis:
     image: redis:latest
     ports:
@@ -34,60 +31,9 @@ services:
     networks:
       - app-network
     restart: unless-stopped
-
-  prometheus:
-    image: prom/prometheus:latest
-    ports:
-      - "${PROMETHEUS_PORT:-9090}:9090"
-    volumes:
-      - ./src/main/resources/prometheus.yml:/etc/prometheus/prometheus.yml
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-    networks:
-      - app-network
-    restart: unless-stopped
-
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: ${CONTAINER_NAME:-sparkle-note-backend}
-    ports:
-      - "${SERVER_PORT:-8080}:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/${DB_NAME}
-      SPRING_DATA_REDIS_HOST: redis
-    env_file:
-      - .env
-    depends_on:
-      mysql-db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - app-network
-    restart: no
-
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - "3001:3000"
-    volumes:
-      - grafana-data:/var/lib/grafana
-    depends_on:
-      - prometheus
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-    networks:
-      - app-network
-    restart: unless-stopped
-
 volumes:
   redis-data:
     name: sparkle-note-redis-data
-  grafana-data:
-    name: sparkle-note-grafana-data
 networks:
   app-network:
     name: sparkle-note-network
