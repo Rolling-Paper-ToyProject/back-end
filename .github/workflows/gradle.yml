@@ -34,7 +34,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: build/libs/*.jar
+          source: "build/libs/*.jar,dockerfile,docker-compose.yml"
           target: ~/sparkle-note
 
       # 5. AWS에서 Docker Compose로 컨테이너 갱신
