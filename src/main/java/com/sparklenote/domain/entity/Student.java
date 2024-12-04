@@ -25,7 +25,7 @@ public class Student extends BaseTimeEntity {
     private String name;
 
     @Column(name = "pin_number")
-    private int pinNumber;
+    private String pinNumber;
 
     @Enumerated(EnumType.STRING)
     private Role role;

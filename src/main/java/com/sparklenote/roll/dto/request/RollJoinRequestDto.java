@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Range;
+
 
 @Data
 @Builder
@@ -24,14 +24,13 @@ public class RollJoinRequestDto {
     @NotNull(message = "클래스 코드는 필수입니다.")
     private int classCode;
 
-    @Min(value = 1000, message = "PIN 번호는 4자리 숫자여야 합니다.")
-    @Max(value = 9999, message = "PIN 번호는 4자리 숫자여야 합니다.")
-    private int pinNumber;
+    @Pattern(regexp = "^[0-9]{4}$", message = "PIN 번호는 4자리 숫자여야 합니다.")
+    private String pinNumber;
 
     public Student toStudent(Roll roll) {
         return Student.builder()
                 .name(name)
-                .pinNumber(pinNumber)
+                .pinNumber((pinNumber))
                 .roll(roll) // Roll 객체 설정 (롤링페이퍼)
                 .role(Role.STUDENT) // 역할 설정 (학생 역할)
                 .build();
