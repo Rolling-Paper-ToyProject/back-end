@@ -9,7 +9,6 @@ import com.sparklenote.roll.dto.request.RollUpdateRequestDto;
 import com.sparklenote.roll.dto.response.RollJoinResponseDto;
 import com.sparklenote.roll.dto.response.RollResponseDTO;
 import com.sparklenote.roll.service.RollService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -278,7 +277,7 @@ class RollControllerTest {
 
         // GIVEN
         String url = "abc12314";
-        RollJoinRequestDto requestDto = new RollJoinRequestDto("아니", 9876, 1234);
+        RollJoinRequestDto requestDto = new RollJoinRequestDto("아니", 9876, "1234");
         RollJoinResponseDto responseDto = RollJoinResponseDto.builder()
                 .rollName("testRoll")
                 .studentName("아니")
@@ -311,7 +310,7 @@ class RollControllerTest {
         );
 
         String url = "abc123";
-        RollJoinRequestDto requestDto = new RollJoinRequestDto("testStudent", 1234, 123); // PIN이 4자리가 아님
+        RollJoinRequestDto requestDto = new RollJoinRequestDto("testStudent", 1234, "123"); // PIN이 4자리가 아님
 
         // WHEN : API 호출
         ResultActions result = mockMvc.perform(post("/roll/" + url + "/join")

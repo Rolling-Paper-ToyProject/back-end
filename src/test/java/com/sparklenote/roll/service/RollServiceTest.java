@@ -361,12 +361,12 @@ public class RollServiceTest {
 
         // GIVEN
         String url = urlGenerator.generateUrl();
-        RollJoinRequestDto requestDto = new RollJoinRequestDto("테스트", 1234, 1010);
+        RollJoinRequestDto requestDto = new RollJoinRequestDto("테스트", 1234, "1010");
 
         Student student = Student.builder()
                 .id(1L)
                 .name("홍길동")
-                .pinNumber(1010)
+                .pinNumber("1010")
                 .build();
 
         Roll roll = Roll.builder()
@@ -402,7 +402,7 @@ public class RollServiceTest {
 
         // GIVEN
         String url = urlGenerator.generateUrl();
-        RollJoinRequestDto requestDto = new RollJoinRequestDto("테스트", 1234, 1234);
+        RollJoinRequestDto requestDto = new RollJoinRequestDto("테스트", 1234, "1234");
 
         given(rollRepository.findByUrl(url)).willReturn(Optional.empty());
 
@@ -417,7 +417,7 @@ public class RollServiceTest {
 
         // GIVEN
         String url = urlGenerator.generateUrl();
-        RollJoinRequestDto requestDto = new RollJoinRequestDto("테스트", 1234, 1234);
+        RollJoinRequestDto requestDto = new RollJoinRequestDto("테스트", 1234, "1234");
 
         Roll roll = Roll.builder()
                 .id(1L)
@@ -438,7 +438,7 @@ public class RollServiceTest {
 
         // GIVEN
         String url = urlGenerator.generateUrl();
-        RollJoinRequestDto requestDto = new RollJoinRequestDto("테스트", 1234, 1234);
+        RollJoinRequestDto requestDto = new RollJoinRequestDto("테스트", 1234, "1234");
 
         Roll roll = Roll.builder()
                 .id(1L)
@@ -449,7 +449,7 @@ public class RollServiceTest {
 
         Student student = Student.builder()
                 .id(1L)
-                .pinNumber(1234)
+                .pinNumber("1234")
                 .name("테스트")
                 .build();
 
@@ -477,11 +477,11 @@ public class RollServiceTest {
 
         //GIVEN
         String url = urlGenerator.generateUrl();
-        RollJoinRequestDto requestDto = new RollJoinRequestDto("테스트", 1234, 1234);
+        RollJoinRequestDto requestDto = new RollJoinRequestDto("테스트", 1234, "1234");
 
         Student student = Student.builder()
                 .id(1L)
-                .pinNumber(1234)
+                .pinNumber("1234")
                 .name("테스트")
                 .build();
 
